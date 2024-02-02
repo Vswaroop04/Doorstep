@@ -1,0 +1,1 @@
+ALTER TABLE "reads" ADD COLUMN "age" text;
