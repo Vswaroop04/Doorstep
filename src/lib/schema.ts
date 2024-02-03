@@ -32,6 +32,7 @@ export const Users = pgTable(
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull(),
+    password: text("password").notNull(),
     lat: customFloat("lat"),
     long: customFloat("long"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -48,6 +49,7 @@ export const Providers = pgTable(
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
+    password: text("password").notNull(),
     email: text("email").notNull(),
     lat: customFloat("lat"),
     long: customFloat("long"),
@@ -69,6 +71,7 @@ export const Slots = pgTable("slots", {
   date: text("date").notNull(),
   slotTime: text("slotTime"),
   slotDuration: customFloat("slotDuration"),
+  slotStatus: text("slotStatus"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
