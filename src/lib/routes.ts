@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import {
   Users,
   Providers,
@@ -6,6 +6,7 @@ import {
   OfflineSchedules,
   Services,
   Slots,
+  Ratings,
 } from "./schema";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
@@ -16,53 +17,79 @@ export type TypeMeetings = typeof Meetings.$inferInsert;
 export type TypeSlots = typeof Slots.$inferInsert;
 export type TypeServices = typeof Services.$inferInsert;
 export type TypeOfflineSchedules = typeof OfflineSchedules.$inferInsert;
+export type TypeUserFeedback = typeof Ratings.$inferInsert;
 
 export const insertNewUser = async (user: TypeUser) => {
   return await db.insert(Users).values(user).returning();
 };
 export const insertNewProvider = async (provider: TypeProvider) => {
-  const providerInsertOperation = db
-    .insert(Providers)
-    .values(provider)
-    .returning();
-  const slotTimes = [9, 10, 11, 13, 14, 15];
-  const currentDate = format(new Date(), "yyyy-MM-dd");
-  slotTimes.map((slotTime) =>
-    db.insert(Slots).values({
-      providerId: sql`${providerInsertOperation}.id`,
-      date: currentDate,
-      slotTime: `${slotTime}:00:00`,
-      slotDuration: 1,
-      slotStatus: "Active",
-      createdAt: sql`NOW()`,
-      updatedAt: sql`NOW()`,
-    })
-  );
-  return providerInsertOperation;
-};
+  return db.transaction(async (tx) => {
+    const providerResult = await tx
+      .insert(Providers)
+      .values(provider)
+      .returning();
 
-export const scheduleMeetingWithProvider = async (
-  slotId: number,
-  userId: number
-) => {
-  return await db.insert(Meetings).values({
-    slotId: slotId,
-    userId: userId,
-    status: "requested",
+    const providerId = providerResult[0].id;
+
+    const slotTimes = [9, 10, 11, 13, 14, 15];
+    const currentDate = format(new Date(), "yyyy-MM-dd");
+
+    for (const slotTime of slotTimes) {
+      await tx.insert(Slots).values({
+        providerId: providerId,
+        date: currentDate,
+        slotTime: `${slotTime}:00:00`,
+        slotDuration: 1,
+        slotStatus: "Active",
+        createdAt: sql`NOW()`,
+        updatedAt: sql`NOW()`,
+      });
+    }
+
+    return providerResult;
   });
 };
+export const scheduleMeetingWithProvider = async (
+  slotId: string,
+  userId: string
+) => {
+  const slot = await db.query.Slots.findFirst({ where: eq(Slots.id, slotId) });
+  if (slot?.slotStatus == "scheduled") {
+    return { message: "This meeting slot has already been booked." };
+  }
+  return await db
+    .insert(Meetings)
+    .values({
+      slotId: slotId,
+      userId: userId,
+      status: "requested",
+    })
+    .returning();
+};
 
-export const approveMeetingWithCustomer = async (meetingId: number) => {
+export const approveMeetingWithCustomer = async (
+  slotId: string,
+  meetingId: string
+) => {
+  const slot = await db.query.Slots.findFirst({ where: eq(Slots.id, slotId) });
+  if (slot?.slotStatus == "scheduled") {
+    return { message: "This slot has already been booked." };
+  }
+  await db
+    .update(Slots)
+    .set({ slotStatus: "scheduled" })
+    .where(eq(Slots.id, slotId));
   return await db
     .update(Meetings)
     .set({ status: "scheduled" })
-    .where(eq(Meetings.id, meetingId));
+    .where(eq(Meetings.id, meetingId))
+    .returning();
 };
 
 export const scheduleOfflineMeetingWithProvider = async (
   OfflineSchedule: TypeOfflineSchedules
 ) => {
-  return await db.insert(OfflineSchedules).values(OfflineSchedule);
+  return await db.insert(OfflineSchedules).values(OfflineSchedule).returning();
 };
 
 export const searchService = async (serviceName: string) => {
@@ -73,45 +100,70 @@ export const searchService = async (serviceName: string) => {
 };
 
 export async function getProvider(email: string, hashedPassword: string) {
-  const provider = await db
-    .select()
-    .from(Providers)
-    .where(eq(Providers.email, email))
-    .execute();
+  const providerWithRelations = await db.query.Providers.findFirst({
+    where: and(eq(Providers.email, email)),
+    with: {
+      slots: {
+        with: {
+          meetings: true,
+        },
+      },
+      offlineSchedules: true,
+      ratings: true,
+    },
+  });
 
-  if (provider.length === 0) return { message: "Provider not found" };
-  if (provider[0].password != hashedPassword) {
-    return { message: "Wrong Password" };
-  }
-
-  const providerId = provider[0].id;
-  const slots = await db
-    .select()
-    .from(Slots)
-    .where(eq(Slots.providerId, providerId))
-    .execute();
-
-  const meetings = await Promise.all(
-    slots.map(async (slot) => {
-      const slotMeetings = await db
-        .select()
-        .from(Meetings)
-        .where(eq(Meetings.slotId, slot.id))
-        .execute();
-      return { ...slot, meetings: slotMeetings };
-    })
-  );
-
-  const offlineSchedules = await db
-    .select()
-    .from(OfflineSchedules)
-    .where(eq(OfflineSchedules.providerId, providerId))
-    .execute();
+  if (!providerWithRelations)
+    return { message: "Provider not found or wrong password" };
 
   return {
     message: "Logged In Successfully",
-    provider: provider[0],
-    slots: meetings,
-    offlineSchedules,
+    provider: providerWithRelations,
   };
+}
+
+export async function getUser(email: string, hashedPassword: string) {
+  const usersWithRelations = await db.query.Users.findFirst({
+    where: and(eq(Users.email, email), eq(Users.password, hashedPassword)),
+    with: {
+      offlineSchedules: true,
+      meetings: {
+        with: {
+          slot: true,
+        },
+      },
+    },
+  });
+
+  if (!usersWithRelations)
+    return { message: "Provider not found or wrong password" };
+
+  return {
+    message: "Logged In Successfully",
+    user: usersWithRelations,
+  };
+}
+
+export async function userFeedback(feedback: TypeUserFeedback) {
+  return await db.insert(Ratings).values(feedback).returning();
+}
+
+export async function getSlots(ProviderId: string) {
+  return await db.query.Slots.findMany({
+    where: (slots, { eq }) => eq(slots.providerId, ProviderId),
+    with: {
+      meetings: true,
+    },
+  });
+}
+export async function getProviders(page: number) {
+  const pageSize = 10;
+  const offset = (page - 1) * pageSize;
+
+  const paginatedProvidersQuery = await db
+    .select()
+    .from(Providers)
+    .limit(pageSize)
+    .offset(offset);
+  return paginatedProvidersQuery;
 }

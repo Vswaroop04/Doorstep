@@ -7,6 +7,8 @@ import {
   timestamp,
   uniqueIndex,
   customType,
+  uuid,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 const customFloat = customType<{ data: number }>({
@@ -30,12 +32,14 @@ export const Services = pgTable(
 export const Users = pgTable(
   "users",
   {
-    id: serial("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
     name: text("name").notNull(),
     email: text("email").notNull(),
     password: text("password").notNull(),
-    lat: customFloat("lat"),
-    long: customFloat("long"),
+    lat: customFloat("lat").notNull(),
+    long: customFloat("long").notNull(),
+    mobile: bigint("mobile", { mode: "number" }),
+
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (users) => {
@@ -48,14 +52,14 @@ export const Users = pgTable(
 export const Providers = pgTable(
   "providers",
   {
-    id: serial("id").primaryKey(),
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
     name: text("name").notNull(),
     password: text("password").notNull(),
     email: text("email").notNull(),
-    lat: customFloat("lat"),
-    long: customFloat("long"),
+    lat: customFloat("lat").notNull(),
+    long: customFloat("long").notNull(),
     offlineDuration: customFloat("offlineDuration"),
-    mobile: integer("mobile"),
+    mobile: bigint("mobile", { mode: "number" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
@@ -69,11 +73,13 @@ export const Providers = pgTable(
 export const Slots = pgTable(
   "slots",
   {
-    id: serial("id").primaryKey(),
-    providerId: integer("provider_id").references(() => Providers.id),
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+    providerId: uuid("provider_id")
+      .references(() => Providers.id, { onDelete: "cascade" })
+      .notNull(),
     date: text("date").notNull(),
-    slotTime: text("slotTime"),
-    slotDuration: customFloat("slotDuration"),
+    slotTime: text("slotTime").notNull(),
+    slotDuration: customFloat("slotDuration").notNull(),
     slotStatus: text("slotStatus"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -90,48 +96,112 @@ export const Slots = pgTable(
 export const providersRelations = relations(Providers, ({ many }) => ({
   slots: many(Slots),
   offlineSchedules: many(OfflineSchedules),
-  
+  ratings: many(Ratings),
 }));
 
 export const usersRelations = relations(Users, ({ many }) => ({
-  slots: many(Slots),
   offlineSchedules: many(OfflineSchedules),
-  
-}));
-
-export const Meetings = pgTable("meetings", {
-  id: serial("id").primaryKey(),
-  slotId: integer("slot_id").references(() => Slots.id),
-  userId: integer("user_id").references(() => Users.id),
-  status: text("status"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-},(meetings) => ({
-    meetingsUniqueConstraint: uniqueIndex("meetings_unique_constraint").on(
-      meetings.slotId,
-      meetings.userId,
-    ),
-  }));
-
-export const slotsRelations = relations(Slots, ({ many }) => ({
   meetings: many(Meetings),
 }));
 
-export const OfflineSchedules = pgTable("meetings", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => Users.id),
-  date: text("date").notNull(),
-  providerId: integer("provider_id").references(() => Providers.id),
-  offlineSlotTime: text("slotTime"),
-  offlineSlotDuration: customFloat("slotDuration"),
-  priority: integer("priority"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-},(offlineschedules) => ({
-    offlineschedulesUniqueConstraint: uniqueIndex("offlineschedules_unique_constraint").on(
+export const Meetings = pgTable(
+  "meetings",
+  {
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+    slotId: uuid("slotId").references(() => Slots.id, { onDelete: "cascade" }),
+    userId: uuid("userId").references(() => Users.id, { onDelete: "cascade" }),
+    status: text("status"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (meetings) => ({
+    meetingsUniqueConstraint: uniqueIndex("meetings_unique_constraint").on(
+      meetings.slotId,
+      meetings.userId
+    ),
+  })
+);
+
+export const slotsRelations = relations(Slots, ({ one, many }) => ({
+  meetings: many(Meetings),
+  provider: one(Providers, {
+    fields: [Slots.providerId],
+    references: [Providers.id],
+  }),
+}));
+
+export const meetingsRelations = relations(Meetings, ({ one }) => ({
+  user: one(Users, { fields: [Meetings.userId], references: [Users.id] }),
+  slot: one(Slots, { fields: [Meetings.slotId], references: [Slots.id] }),
+}));
+
+
+export const OfflineSchedules = pgTable(
+  "offline_meetings",
+  {
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+    userId: uuid("user_id")
+      .references(() => Users.id, { onDelete: "cascade" })
+      .notNull(),
+    providerId: uuid("provider_id")
+      .references(() => Providers.id, { onDelete: "cascade" })
+      .notNull(),
+    date: text("date").notNull(),
+    offlineSlotTime: text("slotTime").notNull(),
+    offlineSlotDuration: customFloat("slotDuration").notNull(),
+    priority: integer("priority"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (offlineschedules) => ({
+    offlineschedulesUniqueConstraint: uniqueIndex(
+      "offlineschedules_unique_constraint"
+    ).on(
       offlineschedules.providerId,
       offlineschedules.userId,
       offlineschedules.date,
       offlineschedules.offlineSlotTime
     ),
-  }));
+  })
+);
+
+export const Ratings = pgTable("ratings", {
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  userId: uuid("user_id")
+    .references(() => Users.id)
+    .notNull(),
+  providerId: uuid("provider_id")
+    .references(() => Providers.id)
+    .notNull(),
+  punctuality: customFloat("punctuality"),
+  professionalism: customFloat("professionalism"),
+  problemResolution: customFloat("problem_resolution"),
+  efficiency: customFloat("efficiency"),
+  cleanliness: customFloat("cleanliness"),
+  responseTime: customFloat("response_time"),
+  resolutionTime: customFloat("resolution_time"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+
+export const offlineSchedulesRelations = relations(
+  OfflineSchedules,
+  ({ one }) => ({
+    user: one(Users, {
+      fields: [OfflineSchedules.userId],
+      references: [Users.id],
+    }),
+    provider: one(Providers, {
+      fields: [OfflineSchedules.providerId],
+      references: [Providers.id],
+    }),
+  })
+);
+
+export const ratingsRelations = relations(Ratings, ({ one }) => ({
+  user: one(Users, { fields: [Ratings.userId], references: [Users.id] }),
+  provider: one(Providers, {
+    fields: [Ratings.providerId],
+    references: [Providers.id],
+  }),
+}));
