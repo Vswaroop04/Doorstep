@@ -117,7 +117,6 @@ export async function getProvider(email: string, hashedPassword: string) {
     return { message: "Provider not found or wrong password" };
 
   return {
-    message: "Logged In Successfully",
     provider: providerWithRelations,
   };
 }
@@ -139,7 +138,6 @@ export async function getUser(email: string, hashedPassword: string) {
     return { message: "Provider not found or wrong password" };
 
   return {
-    message: "Logged In Successfully",
     user: usersWithRelations,
   };
 }
