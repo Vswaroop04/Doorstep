@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   integer,
   pgTable,
@@ -65,16 +66,38 @@ export const Providers = pgTable(
   }
 );
 
-export const Slots = pgTable("slots", {
-  id: serial("id").primaryKey(),
-  providerId: integer("provider_id").references(() => Providers.id),
-  date: text("date").notNull(),
-  slotTime: text("slotTime"),
-  slotDuration: customFloat("slotDuration"),
-  slotStatus: text("slotStatus"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+export const Slots = pgTable(
+  "slots",
+  {
+    id: serial("id").primaryKey(),
+    providerId: integer("provider_id").references(() => Providers.id),
+    date: text("date").notNull(),
+    slotTime: text("slotTime"),
+    slotDuration: customFloat("slotDuration"),
+    slotStatus: text("slotStatus"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (slots) => ({
+    slotsUniqueConstraint: uniqueIndex("slots_unique_constraint").on(
+      slots.providerId,
+      slots.date,
+      slots.slotTime
+    ),
+  })
+);
+
+export const providersRelations = relations(Providers, ({ many }) => ({
+  slots: many(Slots),
+  offlineSchedules: many(OfflineSchedules),
+  
+}));
+
+export const usersRelations = relations(Users, ({ many }) => ({
+  slots: many(Slots),
+  offlineSchedules: many(OfflineSchedules),
+  
+}));
 
 export const Meetings = pgTable("meetings", {
   id: serial("id").primaryKey(),
@@ -83,15 +106,32 @@ export const Meetings = pgTable("meetings", {
   status: text("status"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+},(meetings) => ({
+    meetingsUniqueConstraint: uniqueIndex("meetings_unique_constraint").on(
+      meetings.slotId,
+      meetings.userId,
+    ),
+  }));
+
+export const slotsRelations = relations(Slots, ({ many }) => ({
+  meetings: many(Meetings),
+}));
 
 export const OfflineSchedules = pgTable("meetings", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => Users.id),
+  date: text("date").notNull(),
   providerId: integer("provider_id").references(() => Providers.id),
   offlineSlotTime: text("slotTime"),
   offlineSlotDuration: customFloat("slotDuration"),
   priority: integer("priority"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+},(offlineschedules) => ({
+    offlineschedulesUniqueConstraint: uniqueIndex("offlineschedules_unique_constraint").on(
+      offlineschedules.providerId,
+      offlineschedules.userId,
+      offlineschedules.date,
+      offlineschedules.offlineSlotTime
+    ),
+  }));
