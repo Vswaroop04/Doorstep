@@ -2,6 +2,7 @@ import { getProvider } from "@/lib/routes";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcrypt";
+import { encrypt } from "@/lib/auth";
 
 const TypeReqProviderLogin = z.object({
   email: z.string().email(),
@@ -10,16 +11,29 @@ const TypeReqProviderLogin = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = TypeReqProviderLogin.parse(req.body);
+    const body = await req.json();
+    const { email, password } = TypeReqProviderLogin.parse(body);
     const hashedPassword = await bcrypt.hash(password, 10);
     const provider = await getProvider(email, hashedPassword);
     if ("message" in provider) {
       return NextResponse.json({ message: provider.message }, { status: 400 });
     }
-    return NextResponse.json(
-      { message: "Provider Logged In Succesfully", provider },
+    const session = await encrypt({ payload : provider.provider });
+    const response = NextResponse.json(
+      {
+        message: "Provider Logged In Succesfully",
+        provider: provider.provider,
+      },
       { status: 200 }
     );
+
+    response.cookies.set({
+      name: "session",
+      value: session,
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    });
+    return response;
   } catch (e) {
     return NextResponse.json(
       {

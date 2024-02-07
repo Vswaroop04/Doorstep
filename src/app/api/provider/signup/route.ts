@@ -2,9 +2,7 @@ import { insertNewProvider } from "@/lib/routes";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { SignJWT } from "jose";
-import { nanoid } from "nanoid";
-import { getJwtSecretKey } from "@/lib/auth";
+import { encrypt } from "@/lib/auth";
 
 const TypeReqProviderSignUp = z.object({
   name: z.string(),
@@ -33,15 +31,14 @@ export async function POST(req: NextRequest) {
       ...withoutpwdprovider,
       password: hashedPassword,
     });
+    const providerObj = Provider[0];
     if ("message" in Provider) {
       return NextResponse.json({ message: Provider.message }, { status: 400 });
     }
-    const token = await new SignJWT({})
-      .setProtectedHeader({ alg: "HS256" })
-      .setJti(nanoid())
-      .setIssuedAt()
-      .setExpirationTime("1d")
-      .sign(new TextEncoder().encode(getJwtSecretKey()));
+    // Calculating the expiry time (1 day from now)
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const session = await encrypt({ providerObj, expires });
+
     const response = NextResponse.json(
       {
         message: "Provider Created Successfully",
@@ -51,10 +48,11 @@ export async function POST(req: NextRequest) {
     );
 
     response.cookies.set({
-      name: "Provider-token",
-      value: token,
+      name: "session",
+      expires,
+      value: session,
       httpOnly: true,
-      maxAge: 60 * 60,
+      maxAge: 1000 * 60 * 60 * 24 * 30,
     });
     return response;
   } catch (e) {

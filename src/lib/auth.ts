@@ -1,10 +1,8 @@
-import {jwtVerify } from "jose";
+import { jwtVerify, SignJWT } from "jose";
+import { nanoid } from "nanoid";
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-
-interface UserJwtPayload {
-    jti: string
-    iat : number
-}
 export const getJwtSecretKey = () => {
   const secret = process.env.JWT_SECRET_KEY;
   if (!secret || secret.length === 0) {
@@ -13,14 +11,47 @@ export const getJwtSecretKey = () => {
   return secret;
 };
 
-export const verifyAuth = async (token: string) => {
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .sign(new TextEncoder().encode(getJwtSecretKey()));
+}
+
+export async function decrypt(input: string): Promise<any> {
   try {
-    const verified = await jwtVerify(
-      token,
-      new TextEncoder().encode(getJwtSecretKey())
-      );
-      return verified.payload as UserJwtPayload
-  } catch (e) {
-    throw new Error("Your Token Has Expired");
+    const key = new TextEncoder().encode(getJwtSecretKey());
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ["HS256"],
+    });
+    return payload;
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Error in Authorizing", error },
+      { status: 400 }
+    );
   }
-};
+}
+
+export async function getSession() {
+  const session = cookies().get("session")?.value;
+  if (!session) return null;
+  return await decrypt(session);
+}
+
+export async function updateSession(request: NextRequest) {
+  const session = request.cookies.get("session")?.value;
+  if (!session) return;
+  const parsed = await decrypt(session);
+  console.log("parsed" + parsed);
+  parsed.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+  const res = NextResponse.next();
+  res.cookies.set({
+    name: "session",
+    value: await encrypt(parsed),
+    httpOnly: true,
+    expires: parsed.expires,
+  });
+  return res;
+}

@@ -1,11 +1,9 @@
 import { getSession } from "@/lib/auth";
-import { scheduleMeetingWithProvider } from "@/lib/routes";
+import {
+  scheduleOfflineMeetingWithProvider,
+  TypeOfflineSchedules,
+} from "@/lib/routes";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-
-const TypeReqMeeting = z.object({
-  slotId: z.string(),
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,13 +15,15 @@ export async function POST(req: NextRequest) {
       );
     }
     const body = await req.json();
-    const { slotId } = TypeReqMeeting.parse(body);
-    const userId = session.user.id;
-    const onlineSchedule = await scheduleMeetingWithProvider(userId, slotId);
+    body.providerId = session.provider.id;
+    const offlineMeetingObj = body as TypeOfflineSchedules;
+    const offlineSchedule = await scheduleOfflineMeetingWithProvider(
+      offlineMeetingObj
+    );
     return NextResponse.json(
       {
-        message: `Online Meeting Succesfully Scheduled With User`,
-        onlineSchedule,
+        message: `Offline Meeting Succesfully Scheduled With User`,
+        offlineSchedule,
       },
       { status: 200 }
     );

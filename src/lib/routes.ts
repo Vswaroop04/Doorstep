@@ -99,9 +99,22 @@ export const searchService = async (serviceName: string) => {
     .where(sql`${Services.serviceName} LIKE ${"%" + serviceName + "%"}`);
 };
 
+export async function getService(limit: number) {
+  return await db.query.Services.findMany({
+    limit,
+  });
+}
+
+export async function addService(serviceName: string) {
+  return await db.insert(Services).values({ serviceName }).returning();
+}
+
 export async function getProvider(email: string, hashedPassword: string) {
   const providerWithRelations = await db.query.Providers.findFirst({
     where: and(eq(Providers.email, email)),
+    columns: {
+      password: false,
+    },
     with: {
       slots: {
         with: {
@@ -159,9 +172,25 @@ export async function getProviders(page: number) {
   const offset = (page - 1) * pageSize;
 
   const paginatedProvidersQuery = await db
-    .select()
+    .select({
+      id: Providers.id,
+      name: Providers.name,
+      email: Providers.email,
+      lat: Providers.lat,
+      long: Providers.long,
+      offlineDuration: Providers.offlineDuration,
+      mobile: Providers.mobile,
+      createdAt: Providers.createdAt,
+      updatedAt: Providers.updatedAt,
+    })
     .from(Providers)
     .limit(pageSize)
     .offset(offset);
   return paginatedProvidersQuery;
+}
+
+export async function getFeedback(providerId: string) {
+  return await db.query.Slots.findMany({
+    where: (Ratings, { eq }) => eq(Ratings.providerId, providerId),
+  });
 }
