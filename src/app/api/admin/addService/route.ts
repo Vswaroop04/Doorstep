@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { serviceName } = TypeAddServiceReq.parse(body);
     const session = await getSession();
-    if (!session.admin) {
+    if (!session?.admin) {
       return Response.json(
         { success: false, message: "Not Authorized" },
         { status: 401 }
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: e,
+        e
       },
       { status: 400 }
     );

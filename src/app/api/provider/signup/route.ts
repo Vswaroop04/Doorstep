@@ -9,6 +9,7 @@ const TypeReqProviderSignUp = z.object({
   email: z.string().email(),
   password: z.string(),
   lat: z.number(),
+  serviceName : z.string(),
   long: z.number(),
   offlineDuration: z.number(),
   mobile: z.number().refine((value) => /^\d{10}$/.test(value.toString()), {
@@ -16,33 +17,29 @@ const TypeReqProviderSignUp = z.object({
   }),
 });
 
-function removeSensitiveFields(provider: any) {
-  const { password, ...rest } = provider;
-  return rest;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const provider = TypeReqProviderSignUp.parse(body);
-    const hashedPassword = await bcrypt.hash(provider.password, 10);
-    const { password, ...withoutpwdprovider } = provider;
+    const providerUbj = TypeReqProviderSignUp.parse(body);
+    const hashedPassword = await bcrypt.hash(providerUbj.password, 10);
+    const { password: removedpwd, ...withoutpwdprovider } = providerUbj;
     const Provider = await insertNewProvider({
       ...withoutpwdprovider,
       password: hashedPassword,
     });
-    const providerObj = Provider[0];
+    const providerWithPwd = Provider[0];
     if ("message" in Provider) {
       return NextResponse.json({ message: Provider.message }, { status: 400 });
     }
     // Calculating the expiry time (1 day from now)
+    const { password, ...provider } = providerWithPwd;
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const session = await encrypt({ providerObj, expires });
+    const session = await encrypt({ provider, expires });
 
     const response = NextResponse.json(
       {
         message: "Provider Created Successfully",
-        Provider: removeSensitiveFields(Provider),
+        provider,
       },
       { status: 200 }
     );

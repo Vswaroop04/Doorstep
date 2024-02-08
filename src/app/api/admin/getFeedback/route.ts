@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { providerId } = TypeAddFeedbacksReq.parse(body);
     const session = await getSession();
-    if (!session.admin) {
+    if (!session?.admin) {
       return Response.json(
         { success: false, message: "Not Authorized" },
         { status: 401 }

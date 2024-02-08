@@ -11,15 +11,15 @@ const TypeReqAcceptRequest = z.object({
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session.provider) {
+    if (!session?.provider) {
       return Response.json(
         { success: false, message: "Not Authorized" },
         { status: 401 }
       );
     }
-    console.log(session.provider)
-    const { meetingId, slotId } = TypeReqAcceptRequest.parse(req.body);
-    const approvedMeeting = await approveMeetingWithCustomer(meetingId, slotId);
+    const body = await req.json();
+    const { meetingId, slotId } = TypeReqAcceptRequest.parse(body);
+    const approvedMeeting = await approveMeetingWithCustomer(slotId, meetingId);
 
     if ("message" in approvedMeeting) {
       return NextResponse.json(

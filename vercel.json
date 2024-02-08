@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/createSlots",
+      "schedule": "0 5 * * *"
+    }
+  ]
+}

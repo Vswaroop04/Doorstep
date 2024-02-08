@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session.provider) {
+    if (!session?.provider) {
       return Response.json(
         { success: false, message: "Not Authorized" },
         { status: 401 }
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (e) {
+    console.log(e)
     return NextResponse.json(
       {
         error: e,

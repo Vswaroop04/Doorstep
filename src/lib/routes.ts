@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { and, eq, sql } from "drizzle-orm";
 import {
   Users,
@@ -49,13 +50,39 @@ export const insertNewProvider = async (provider: TypeProvider) => {
     return providerResult;
   });
 };
+
+export async function getAllProviderIds(): Promise<string[]> {
+  const result = await db.query.Providers.findMany({
+    columns: { id: true },
+  });
+  return result.map((provider: { id: string }) => provider.id);
+}
+export const createSlots = async (providerId: string) => {
+  return db.transaction(async (tx) => {
+    const slotTimes = [9, 10, 11, 13, 14, 15];
+    const currentDate = format(new Date(), "yyyy-MM-dd");
+
+    for (const slotTime of slotTimes) {
+      await tx.insert(Slots).values({
+        providerId: providerId,
+        date: currentDate,
+        slotTime: `${slotTime}:00:00`,
+        slotDuration: 1,
+        slotStatus: "Active",
+        createdAt: sql`NOW()`,
+        updatedAt: sql`NOW()`,
+      });
+    }
+  });
+};
+
 export const scheduleMeetingWithProvider = async (
   slotId: string,
   userId: string
 ) => {
   const slot = await db.query.Slots.findFirst({ where: eq(Slots.id, slotId) });
   if (slot?.slotStatus == "scheduled") {
-    return { message: "This meeting slot has already been booked." };
+    return { message: "This meeting slot had already been booked." };
   }
   return await db
     .insert(Meetings)
@@ -112,9 +139,6 @@ export async function addService(serviceName: string) {
 export async function getProvider(email: string, hashedPassword: string) {
   const providerWithRelations = await db.query.Providers.findFirst({
     where: and(eq(Providers.email, email)),
-    columns: {
-      password: false,
-    },
     with: {
       slots: {
         with: {
@@ -126,9 +150,17 @@ export async function getProvider(email: string, hashedPassword: string) {
     },
   });
 
-  if (!providerWithRelations)
-    return { message: "Provider not found or wrong password" };
+  if (!providerWithRelations) {
+    return { message: "Provider not found" };
+  }
+  const validPassword = await bcrypt.compare(
+    hashedPassword,
+    providerWithRelations?.password
+  );
 
+  if (!validPassword) {
+    return { message: "Wrong password" };
+  }
   return {
     provider: providerWithRelations,
   };
@@ -136,7 +168,7 @@ export async function getProvider(email: string, hashedPassword: string) {
 
 export async function getUser(email: string, hashedPassword: string) {
   const usersWithRelations = await db.query.Users.findFirst({
-    where: and(eq(Users.email, email), eq(Users.password, hashedPassword)),
+    where: and(eq(Users.email, email)),
     with: {
       offlineSchedules: true,
       meetings: {
@@ -148,7 +180,12 @@ export async function getUser(email: string, hashedPassword: string) {
   });
 
   if (!usersWithRelations)
-    return { message: "Provider not found or wrong password" };
+    return { message: "User not found or wrong password" };
+
+  const validPassword = await bcrypt.compare(
+    hashedPassword,
+    usersWithRelations?.password
+  );
 
   return {
     user: usersWithRelations,
@@ -171,26 +208,21 @@ export async function getProviders(page: number) {
   const pageSize = 10;
   const offset = (page - 1) * pageSize;
 
-  const paginatedProvidersQuery = await db
-    .select({
-      id: Providers.id,
-      name: Providers.name,
-      email: Providers.email,
-      lat: Providers.lat,
-      long: Providers.long,
-      offlineDuration: Providers.offlineDuration,
-      mobile: Providers.mobile,
-      createdAt: Providers.createdAt,
-      updatedAt: Providers.updatedAt,
-    })
-    .from(Providers)
-    .limit(pageSize)
-    .offset(offset);
-  return paginatedProvidersQuery;
+  const providersWithSlotsAndPagination = await db.query.Providers.findMany({
+    columns: {
+      password: false,
+    },
+    with: {
+      slots: true,
+    },
+    limit: pageSize,
+    offset: offset,
+  });
+  return providersWithSlotsAndPagination;
 }
 
 export async function getFeedback(providerId: string) {
-  return await db.query.Slots.findMany({
+  return await db.query.Ratings.findMany({
     where: (Ratings, { eq }) => eq(Ratings.providerId, providerId),
   });
 }

@@ -13,12 +13,11 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { email, password } = TypeReqProviderLogin.parse(body);
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const provider = await getProvider(email, hashedPassword);
+    const provider = await getProvider(email, password);
     if ("message" in provider) {
       return NextResponse.json({ message: provider.message }, { status: 400 });
     }
-    const session = await encrypt({ payload : provider.provider });
+    const session = await encrypt({ provider : provider.provider });
     const response = NextResponse.json(
       {
         message: "Provider Logged In Succesfully",

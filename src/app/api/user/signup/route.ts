@@ -26,10 +26,11 @@ export async function POST(req: NextRequest) {
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const session = await encrypt({ user });
 
+    const { password, ...userWithoutPwd } = user;
     const response = NextResponse.json(
       {
         message: "User Created Successfully",
-        user,
+        user: userWithoutPwd,
       },
       { status: 200 }
     );

@@ -59,6 +59,7 @@ export const Providers = pgTable(
     lat: customFloat("lat").notNull(),
     long: customFloat("long").notNull(),
     offlineDuration: customFloat("offlineDuration"),
+    serviceName: text("serviceName").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -135,7 +136,6 @@ export const meetingsRelations = relations(Meetings, ({ one }) => ({
   slot: one(Slots, { fields: [Meetings.slotId], references: [Slots.id] }),
 }));
 
-
 export const OfflineSchedules = pgTable(
   "offline_meetings",
   {
@@ -182,7 +182,6 @@ export const Ratings = pgTable("ratings", {
   resolutionTime: customFloat("resolution_time"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
-
 
 export const offlineSchedulesRelations = relations(
   OfflineSchedules,

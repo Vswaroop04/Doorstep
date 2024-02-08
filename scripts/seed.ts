@@ -32,6 +32,7 @@ async function testFunctions() {
       long: 0.0,
       offlineDuration: 1.5,
       mobile: 9876543210,
+      serviceName : "Plumber"
     };
     const createdProvider = await insertNewProvider(provider);
     console.log("Provider created:", createdProvider);

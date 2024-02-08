@@ -12,12 +12,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { email, password } = TypeReqProviderLogin.parse(body);
+
     if (
       email == process.env.ADMIN_MAIL &&
-      password == process.env.ADMIN_MAIL
+      password == process.env.ADMIN_PASSWORD
     ) {
       const session = await encrypt({
-        payload: { admin: { name: "DoorStep", email: process.env.ADMIN_MAIL } },
+        admin: { name: "DoorStep", email: process.env.ADMIN_MAIL },
       });
       const response = NextResponse.json(
         {
@@ -33,13 +34,13 @@ export async function POST(req: NextRequest) {
         maxAge: 1000 * 60 * 60 * 24 * 30,
       });
       return response;
-      }
-      return NextResponse.json(
-        {
-          message: "Invalid Credentials",
-        },
-        { status: 401 }
-      );
+    }
+    return NextResponse.json(
+      {
+        message: "Invalid Credentials",
+      },
+      { status: 401 }
+    );
   } catch (e) {
     return NextResponse.json(
       {

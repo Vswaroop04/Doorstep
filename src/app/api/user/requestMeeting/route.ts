@@ -10,7 +10,7 @@ const TypeReqMeeting = z.object({
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session.provider) {
+    if (!session?.user) {
       return Response.json(
         { success: false, message: "Not Authorized" },
         { status: 401 }
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { slotId } = TypeReqMeeting.parse(body);
     const userId = session.user.id;
-    const onlineSchedule = await scheduleMeetingWithProvider(userId, slotId);
+    const onlineSchedule = await scheduleMeetingWithProvider(slotId,userId);
     return NextResponse.json(
       {
         message: `Online Meeting Succesfully Scheduled With User`,

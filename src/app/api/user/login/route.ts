@@ -11,16 +11,16 @@ const TypeReqUserLogin = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = TypeReqUserLogin.parse(req.body);
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await getUser(email, hashedPassword);
+    const body = await req.json();
+    const { email, password } = TypeReqUserLogin.parse(body);
+    const user = await getUser(email, password);
     if ("message" in user) {
       return NextResponse.json({ message: user.message }, { status: 400 });
     }
-    const session = await encrypt({ payload: user.user });
+    const session = await encrypt({ user: user.user });
 
     const response = NextResponse.json(
-      { message: "User Logged In Succesfully", user },
+      { message: "User Logged In Succesfully", user: user.user },
       { status: 200 }
     );
     response.cookies.set({

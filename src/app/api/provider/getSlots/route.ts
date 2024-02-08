@@ -1,19 +1,20 @@
-import { getService } from "@/lib/routes";
+import { getSlots } from "@/lib/routes";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-const TypeReqGetServices = z.object({
-  limit : z.number(),
+const TyoeReqGetSlots = z.object({
+  providerId: z.string(),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { limit } = TypeReqGetServices.parse(body);
-    const services = await getService(limit);
+    const { providerId } = TyoeReqGetSlots.parse(body);
+
+    const slots = await getSlots(providerId);
     return NextResponse.json(
       {
-        services,
+        slots,
       },
       { status: 200 }
     );
@@ -26,3 +27,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+  
