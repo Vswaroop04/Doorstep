@@ -61,6 +61,7 @@ export const Providers = pgTable(
     offlineDuration: customFloat("offlineDuration"),
     serviceName: text("serviceName").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
+    averageRating :  customFloat("averageRating"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
