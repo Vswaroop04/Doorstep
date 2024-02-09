@@ -1,6 +1,5 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { SearchIcon } from "lucide-react";
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -17,7 +16,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        <SearchIcon className="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />{" "}
       </div>
     );
   }

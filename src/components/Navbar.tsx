@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icons } from "./Icons";
 import { buttonVariants } from "./ui/button";
 import Image from "next/image";
+import { SearchBar } from "./home/SearchBar";
 
 const Navbar = () => {
   const user = null;
@@ -15,7 +16,9 @@ const Navbar = () => {
             </Link>
             <h1 className="py-5 ">D O O R S T E P</h1>
           </div>
-       
+          <div className="ml-auto  flex justify-center items-center">
+            <SearchBar />
+          </div>
           <div className="ml-auto flex items-center">
             <div className="hidden lg:flex lg:justify-end lg:items-center lg:space-x-6">
               {user ? null : (
