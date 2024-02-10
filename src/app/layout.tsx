@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-query";
 import { useState } from "react";
 import Footer from "@/components/Footer";
+import ToastProvider from "@/providers/Toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,7 +49,10 @@ export default function RootLayout({
             {/* This flex and min-h-screen props put the footer at the end with 100vh default size , flex-1 makes the free space occupies */}
             <main className="relative flex flex-col min-h-screen">
               <Navbar />
-              <div className="flex-grow flex-1">{children}</div>
+              <div className="flex-grow flex-1">
+                {" "}
+                <ToastProvider> {children}</ToastProvider>
+              </div>
               <Footer />
             </main>{" "}
           </body>

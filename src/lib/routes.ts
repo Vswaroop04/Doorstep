@@ -171,6 +171,17 @@ export const searchService = async (serviceName: string) => {
     .where(sql`${Services.serviceName} LIKE ${"%" + serviceName + "%"}`);
 };
 
+export const serviceExists = async (serviceName: string) => {
+  const serviceExists = await db.query.Services.findFirst({
+    where: eq(Services.serviceName, serviceName),
+  });
+  if (serviceExists) {
+    return { success: true, message: "Service Exists" };
+  } else {
+    return { success: false, message: "Service Doesnt Exist" };
+  }
+};
+
 export async function getService(limit: number) {
   return await db.query.Services.findMany({
     limit,

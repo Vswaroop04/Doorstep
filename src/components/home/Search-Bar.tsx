@@ -5,6 +5,7 @@ import { SearchIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "@/hooks/useClickOutside";
 import { useDebounce } from "@/hooks/useDebounce";
+import Link from "next/link";
 
 export const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,7 +52,9 @@ export const SearchBar = () => {
                 key={index}
                 className="text-gray-800 my-2 flex items-center justify-center py-1 cursor-pointer hover:bg-slate-200"
               >
-                {result?.serviceName}
+                <Link href={`/service/${result?.serviceName}`}>
+                  {result?.serviceName}
+                </Link>
               </li>
             ))}
           </ul>

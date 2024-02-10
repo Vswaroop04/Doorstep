@@ -10,7 +10,6 @@ const TypeReqProviderSignUp = z.object({
   password: z.string(),
   lat: z.number(),
   long: z.number(),
-  offlineDuration: z.number(),
   mobile: z.number().refine((value) => /^\d{10}$/.test(value.toString()), {
     message: "Invalid mobile number",
   }),

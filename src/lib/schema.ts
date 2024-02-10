@@ -39,7 +39,6 @@ export const Users = pgTable(
     lat: customFloat("lat").notNull(),
     long: customFloat("long").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
-
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
   (users) => {
