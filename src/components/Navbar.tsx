@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Icons } from "./Icons";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
-import { SearchBar } from "./home/SearchBar";
+import { SearchBar } from "@/components/home/SearchBar";
 
 const Navbar = () => {
   const user = null;
