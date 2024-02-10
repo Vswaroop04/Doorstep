@@ -11,6 +11,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { useState } from "react";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -48,6 +49,7 @@ export default function RootLayout({
             <main className="relative flex flex-col min-h-screen">
               <Navbar />
               <div className="flex-grow flex-1">{children}</div>
+              <Footer />
             </main>{" "}
           </body>
         </html>
