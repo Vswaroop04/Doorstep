@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Icons } from "./Icons";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
-import { SearchBar } from "@/components/home/SearchBar";
+import { SearchBar } from "@/components/home/Search-Bar";
 
 const Navbar = () => {
   const user = null;
