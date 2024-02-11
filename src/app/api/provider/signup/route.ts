@@ -33,8 +33,6 @@ export async function POST(req: NextRequest) {
     }
     // Calculating the expiry time (1 day from now)
     const { password, ...provider } = providerWithPwd;
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const session = await encrypt({ provider, expires });
 
     const response = NextResponse.json(
       {
@@ -44,13 +42,6 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
 
-    response.cookies.set({
-      name: "session",
-      expires,
-      value: session,
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    });
     return response;
   } catch (e) {
     return NextResponse.json(

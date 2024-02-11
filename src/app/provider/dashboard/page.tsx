@@ -3,9 +3,12 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import React, { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { perks } from "@/components/Perks";
+import useAuth from "@/hooks/useAuth";
 
 const Services = () => {
   const router = useRouter();
+  const { auth } = useAuth();
+  console.log(auth);
   return (
     <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
       <div>
@@ -13,7 +16,7 @@ const Services = () => {
         <section className="border-t border-gray-200 bg-gray-50 py-4 ">
           <p className="text-xl text-center flex flex-col items-center">
             {" "}
-            Services{" "}
+            Explore Our Other Services{" "}
           </p>
           <MaxWidthWrapper>
             <div className="grid grid-cols-1 gap-y-12 sm:gap-x-6 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-0">

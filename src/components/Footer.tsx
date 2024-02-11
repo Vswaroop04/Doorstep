@@ -1,13 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import MaxWidthWrapper from "./MaxWidthWrapper";
 import Link from "next/link";
-import Image from "next/image";
 
 const Footer = () => {
-  const pathname = usePathname();
-  const pathsToMinimize = ["/verify-email", "/sign-up", "/sign-in"];
 
   return (
     <footer className="bg-white flex-grow-0">

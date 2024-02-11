@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth";
 
 export async function GET() {
   const Payload = await getSession();
-  if (Payload.provider) {
+  if (Payload?.provider) {
     const response = NextResponse.json({
       message: "Authorized",
       provider: Payload.provider,
@@ -11,7 +11,7 @@ export async function GET() {
 
     return response;
   }
-  if (Payload.user) {
+  if (Payload?.user) {
     const response = NextResponse.json({
       message: "Authorized",
       user: Payload.user,
@@ -19,7 +19,7 @@ export async function GET() {
 
     return response;
   }
-  if (Payload.admin) {
+  if (Payload?.admin) {
     const response = NextResponse.json({
       message: "Authorized",
       admin: Payload.admin,

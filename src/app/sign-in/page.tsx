@@ -4,7 +4,7 @@ import { Suspense } from "react";
 const SuccessPage: React.FC = () => {
   return (
     <div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
         <SignInComponent />
       </Suspense>
     </div>
