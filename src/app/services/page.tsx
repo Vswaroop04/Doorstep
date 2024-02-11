@@ -1,8 +1,8 @@
 "use client"
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import React from "react";
-import { perks } from "../page";
 import { useRouter } from "next/navigation";
+import { perks } from "@/components/Perks";
 
 const Services = () => {
   const router = useRouter();
