@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { OfflineMeetingCard } from "@/components/user/OfflineScheduleCard";
+import { MeetingCard } from "@/components/user/MeetingsCard";
 
 const Services = () => {
   const router = useRouter();
@@ -28,22 +30,52 @@ const Services = () => {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Welcome back!</h2>
             <p className="text-muted-foreground">
               Here&apos;s a list of your services
             </p>
           </div>
-          <div className="flex items-center space-x-2"></div>
+          <div>Hi , {auth.user.name}</div>
         </div>
-        {/* Data table */}
+        <h2 className="text-2xl font-bold tracking-tight">Offline Schedules</h2>
+        <div className="grid grid-cols-3">
+          {auth?.user?.offlineSchedules?.map((ofsc) => (
+            <OfflineMeetingCard
+              key={ofsc.id}
+              providerName={ofsc.provider?.name}
+              serviceName={ofsc.provider?.serviceName}
+              date={ofsc.date}
+              offlineDuration={ofsc.offlineSlotDuration}
+              offlineSlotTime={ofsc.offlineSlotTime}
+              providerEmail={ofsc.provider?.email}
+              providerMobile={ofsc.provider?.mobile}
+            />
+          ))}
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight">Meetings</h2>
+        <div className="grid grid-cols-3">
+          {auth?.user?.meetings?.map((ofsc) => (
+            <MeetingCard
+              key={ofsc.id}
+              providerName={ofsc.slot?.provider?.name}
+              serviceName={ofsc.slot?.provider?.serviceName}
+              date={ofsc.slot?.date}
+              providerEmail={ofsc.slot?.provider?.email}
+              providerMobile={ofsc.slot?.provider?.mobile}
+              slotStatus={ofsc.slot?.slotStatus}
+              slotTime={ofsc.slot?.slotTime}
+              slotDuration={ofsc.slot?.slotDuration}
+            />
+          ))}
+        </div>
       </div>
       <div>
         {" "}
+        <p className="text-xl text-center flex flex-col items-center">
+          {" "}
+          Explore Our Other Services{" "}
+        </p>
         <section className="border-t border-gray-200 bg-gray-50 py-4 ">
-          <p className="text-xl text-center flex flex-col items-center">
-            {" "}
-            Explore Our Other Services{" "}
-          </p>
           <MaxWidthWrapper>
             <div className="grid grid-cols-1 gap-y-12 sm:gap-x-6 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-0">
               {perks.map((perk) => (

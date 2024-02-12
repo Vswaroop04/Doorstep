@@ -48,7 +48,7 @@ interface Meeting {
   updatedAt: string;
   slot?: Slot;
   user?: User;
-  provider? :Provider
+  provider?: Provider;
 }
 
 interface Slot {
@@ -60,7 +60,8 @@ interface Slot {
   slotStatus: string;
   createdAt: string;
   updatedAt: string;
-  meetings : Meeting[]
+  meetings: Meeting[];
+  provider?: Provider;
 }
 
 interface OfflineSchedule {
