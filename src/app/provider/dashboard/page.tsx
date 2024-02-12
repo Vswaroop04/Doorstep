@@ -12,6 +12,7 @@ const Services = () => {
   return (
     <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
       <div>
+        <h1> Hi {auth?.provider?.name} </h1>
         {" "}
         <section className="border-t border-gray-200 bg-gray-50 py-4 ">
           <p className="text-xl text-center flex flex-col items-center">

@@ -4,13 +4,39 @@ import React, { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const Services = () => {
   const router = useRouter();
-  const { auth } = useAuth()
-  console.log(auth)
+  const { auth } = useAuth();
+  console.log(auth);
+  if (!auth?.user) {
+    toast.message("Please Login As User");
+    setTimeout(() => {
+      router.push("/sign-in");
+    }, 1000);
+    return (
+      <div className="relative">
+        <div className="absolute left-1/2">
+          Please Login As A User to Continue
+        </div>
+      </div>
+    );
+  }
   return (
     <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
+      <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+        <div className="flex items-center justify-between space-y-2">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+            <p className="text-muted-foreground">
+              Here&apos;s a list of your services
+            </p>
+          </div>
+          <div className="flex items-center space-x-2"></div>
+        </div>
+        {/* Data table */}
+      </div>
       <div>
         {" "}
         <section className="border-t border-gray-200 bg-gray-50 py-4 ">

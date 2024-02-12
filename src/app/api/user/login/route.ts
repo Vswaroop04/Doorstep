@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if ("message" in user) {
       return NextResponse.json({ message: user.message }, { status: 400 });
     }
-    const session = await encrypt({ user: user.user });
+    const session = await encrypt({ user: user.user.id });
 
     const response = NextResponse.json(
       { message: "User Logged In Succesfully", user: user.user },

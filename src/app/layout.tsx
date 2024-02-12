@@ -43,7 +43,6 @@ export default function RootLayout({
       <QueryClientProvider client={queryClient}>
         <html lang="en" className="h-full">
           <link rel="icon" href="/favicon.ico" sizes="any" />
-          <AuthInit />
           <body
             className={cn(
               "relative h-full font-sans antialiased",
@@ -56,7 +55,10 @@ export default function RootLayout({
               <Navbar />
               <div className="flex-grow flex-1">
                 {" "}
-                <ToastProvider> {children}</ToastProvider>
+                <ToastProvider>
+                  {" "}
+                  <AuthInit>{children}</AuthInit>
+                </ToastProvider>
               </div>
               <Footer />
             </main>{" "}

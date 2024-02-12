@@ -2,6 +2,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { SearchBar } from "@/components/home/Search-Bar";
+import NavbarTitle from "./NavbarTitle";
 
 const Navbar = () => {
   const user = null;
@@ -19,43 +20,7 @@ const Navbar = () => {
             <SearchBar />
           </div>
           <div className="ml-auto flex items-center">
-            <div className="hidden lg:flex lg:justify-end lg:items-center lg:space-x-6">
-              {user ? null : (
-                <Link
-                  href={"/sign-in"}
-                  className={buttonVariants({ variant: "ghost" })}
-                >
-                  {" "}
-                  Sign In{" "}
-                </Link>
-              )}
-
-              {user ? null : (
-                <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-              )}
-
-              {user ? (
-                <p></p>
-              ) : (
-                <Link
-                  href={"/sign-up"}
-                  className={buttonVariants({ variant: "ghost" })}
-                  aria-hidden="true"
-                >
-                  Create Account
-                </Link>
-              )}
-
-              {user ? null : (
-                <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-              )}
-
-              {user ? null : (
-                <div className="flex lg:ml-6">
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                </div>
-              )}
-            </div>
+           <NavbarTitle />
           </div>
         </div>
       </header>

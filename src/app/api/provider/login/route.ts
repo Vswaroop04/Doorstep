@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if ("message" in provider) {
       return NextResponse.json({ message: provider.message }, { status: 400 });
     }
-    const session = await encrypt({ provider : provider.provider });
+    const session = await encrypt({ provider : provider.provider.id });
     const response = NextResponse.json(
       {
         message: "Provider Logged In Succesfully",

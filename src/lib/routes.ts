@@ -198,11 +198,35 @@ export async function getProvider(email: string, hashedPassword: string) {
     with: {
       slots: {
         with: {
-          meetings: true,
+          meetings: {
+            with: {
+              user: {
+                columns: {
+                  password: false,
+                },
+              },
+            },
+          },
         },
       },
-      offlineSchedules: true,
-      ratings: true,
+      offlineSchedules: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
+      ratings: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -226,10 +250,26 @@ export async function getUser(email: string, hashedPassword: string) {
   const usersWithRelations = await db.query.Users.findFirst({
     where: and(eq(Users.email, email)),
     with: {
-      offlineSchedules: true,
+      offlineSchedules: {
+        with: {
+          provider: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
       meetings: {
         with: {
-          slot: true,
+          slot: {
+            with: {
+              provider: {
+                columns: {
+                  password: false,
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -242,6 +282,90 @@ export async function getUser(email: string, hashedPassword: string) {
     hashedPassword,
     usersWithRelations?.password
   );
+
+  return {
+    user: usersWithRelations,
+  };
+}
+
+export async function getProviderById(id: string) {
+  const providerWithRelations = await db.query.Providers.findFirst({
+    where: and(eq(Providers.id, id)),
+    with: {
+      slots: {
+        with: {
+          meetings: {
+            with: {
+              user: {
+                columns: {
+                  password: false,
+                },
+              },
+            },
+          },
+        },
+      },
+      offlineSchedules: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
+      ratings: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!providerWithRelations) {
+    return { message: "Provider not found" };
+  }
+
+  return {
+    provider: providerWithRelations,
+  };
+}
+
+export async function getUserById(id: string) {
+  const usersWithRelations = await db.query.Users.findFirst({
+    where: and(eq(Users.id, id)),
+    with: {
+      offlineSchedules: {
+        with: {
+          provider: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
+      meetings: {
+        with: {
+          slot: {
+            with: {
+              provider: {
+                columns: {
+                  password: false,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!usersWithRelations)
+    return { message: "User not found or wrong password" };
 
   return {
     user: usersWithRelations,

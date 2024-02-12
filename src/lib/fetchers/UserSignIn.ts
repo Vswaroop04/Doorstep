@@ -1,4 +1,6 @@
-export const userSignup = async (userReq: userReq): Promise<UserResponse> => {
+import AuthType from "../types/authType";
+
+export const userSignup = async (userReq: userReq): Promise<AuthType> => {
   const response = await fetch("/api/user/login", {
     method: "POST",
     headers: {
@@ -15,58 +17,9 @@ export const userSignup = async (userReq: userReq): Promise<UserResponse> => {
   return res;
 };
 
-interface UserResponse {
-  message: string;
-  user?: User;
-}
+
 
 interface userReq {
   email: string;
   password: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-  lat: number;
-  long: number;
-  mobile: number;
-  createdAt: string;
-  offlineSchedules?: OfflineSchedule[];
-  meetings?: Meeting[];
-}
-
-interface Meeting {
-  id: string;
-  slotId: string;
-  userId: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  slot?: Slot;
-}
-
-interface Slot {
-  id: string;
-  providerId: string;
-  date: string;
-  slotTime: string;
-  slotDuration: number;
-  slotStatus: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface OfflineSchedule {
-  id: string;
-  userId: string;
-  providerId: string;
-  date: string;
-  offlineSlotTime: string;
-  offlineSlotDuration: number;
-  priority: number;
-  createdAt: string;
-  updatedAt: string;
 }

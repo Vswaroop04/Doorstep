@@ -2,7 +2,14 @@ import { jwtVerify, SignJWT } from "jose";
 import { nanoid } from "nanoid";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getProviderById, getUserById } from "./routes";
+interface Provider {
+  id: string;
+}
 
+interface User {
+  id: string;
+}
 export const getJwtSecretKey = () => {
   const secret = process.env.JWT_SECRET_KEY;
   if (!secret || secret.length === 0) {
@@ -21,9 +28,19 @@ export async function encrypt(payload: any) {
 export async function decrypt(input: string): Promise<any> {
   try {
     const key = new TextEncoder().encode(getJwtSecretKey());
+
     const { payload } = await jwtVerify(input, key, {
       algorithms: ["HS256"],
     });
+    if (payload?.provider) {
+      const providerId = payload.provider as string;
+      return getProviderById(providerId);
+    }
+
+    if (payload?.user) {
+      const userId = payload.user as string;
+      return getUserById(userId);
+    }
     return payload;
   } catch (error) {
     console.log(error);

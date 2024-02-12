@@ -47,6 +47,8 @@ interface Meeting {
   createdAt: string;
   updatedAt: string;
   slot?: Slot;
+  user?: User;
+  provider? :Provider
 }
 
 interface Slot {
@@ -58,6 +60,7 @@ interface Slot {
   slotStatus: string;
   createdAt: string;
   updatedAt: string;
+  meetings : Meeting[]
 }
 
 interface OfflineSchedule {
@@ -70,6 +73,8 @@ interface OfflineSchedule {
   priority: number;
   createdAt: string;
   updatedAt: string;
+  provider?: Provider;
+  user?: User;
 }
 
 interface Rating {
@@ -84,4 +89,5 @@ interface Rating {
   responseTime: number;
   resolutionTime: number;
   createdAt: string;
+  provider?: Provider;
 }
