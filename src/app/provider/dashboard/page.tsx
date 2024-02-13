@@ -4,49 +4,57 @@ import React, { Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { SlotsCard } from "@/components/Provider/SlotsCard";
 
 const Services = () => {
   const router = useRouter();
   const { auth } = useAuth();
-  console.log(auth);
+  if (!auth?.provider) {
+    toast.message("Please Login As Provider");
+    setTimeout(() => {
+      router.push("/sign-in?as=provider");
+    }, 1000);
+    return (
+      <div className="relative">
+        <div className="absolute left-1/2">
+          Please Login As A Provider to Continue
+        </div>
+      </div>
+    );
+  }
   return (
     <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
-      <div>
-        <h1> Hi {auth?.provider?.name} </h1>
+      <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
         {" "}
-        <section className="border-t border-gray-200 bg-gray-50 py-4 ">
-          <p className="text-xl text-center flex flex-col items-center">
-            {" "}
-            Explore Our Other Services{" "}
-          </p>
-          <MaxWidthWrapper>
-            <div className="grid grid-cols-1 gap-y-12 sm:gap-x-6 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-0">
-              {perks.map((perk) => (
-                <div
-                  key={perk.name}
-                  className="cursor-pointer text-center md:flex md:items-start md:text-left lg:block lg:text-center lg:my-10"
-                  onClick={() => {
-                    router.push(perk.href);
-                  }}
-                >
-                  <div className="md:flex-shrink-0 flex justify-center">
-                    <div className="h-16 w-16 flex items-center justify-center rounded-full bg-blue-100 text-blue-900">
-                      {<perk.Icon className="w-1/3 h-1/3" />}
-                    </div>
-                  </div>
-                  <div className="mt-6 md:ml-4 md:mt-0 lg:ml-0 lg:mt-6">
-                    <h3 className="text-base font-medium text-gray-900">
-                      {perk.name}
-                    </h3>
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      {perk.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        <section className="border-t border-gray-200 bg-gray-50 p-4">
+          <div className="flex items-center justify-between space-y-2">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">
+                Welcome back!
+              </h2>
+              <p className="text-muted-foreground my-4">
+                Manage your Slots, Meetings and Offline Schedules Here!
+              </p>
             </div>
-          </MaxWidthWrapper>
+            <div>Hi , {auth.provider.name}</div>
+          </div>
         </section>
+        <div className="p-6 pt-0">
+          <h2 className="text-3xl font-semibold tracking-tight m-4">Slots</h2>
+          <div className="grid grid-cols-4 gap-4">
+            {auth.provider?.slots?.map((slot) => (
+              <SlotsCard
+                key={slot?.date}
+                date={slot?.date}
+                slotTime={slot?.slotTime}
+                slotStatus={slot?.slotStatus}
+                slotDuration={slot?.slotDuration}
+                meetings={slot.meetings}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </Suspense>
   );

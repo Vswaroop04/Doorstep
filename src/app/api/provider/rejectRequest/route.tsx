@@ -19,16 +19,16 @@ export async function POST(req: NextRequest) {
     }
     const body = await req.json();
     const { meetingId, slotId } = TypeReqAcceptRequest.parse(body);
-    const approvedMeeting = await rejectMeetingWithCustomer(slotId, meetingId);
+    const rejectedMeeting = await rejectMeetingWithCustomer(slotId, meetingId);
 
-    if ("message" in approvedMeeting) {
+    if ("message" in rejectedMeeting) {
       return NextResponse.json(
-        { message: approvedMeeting.message },
+        { message: rejectedMeeting.message },
         { status: 400 }
       );
     }
     return NextResponse.json(
-      { message: "Meeting Approved Succesfully", approvedMeeting },
+      { message: "Meeting Approved Succesfully", rejectedMeeting },
       { status: 200 }
     );
   } catch (e) {

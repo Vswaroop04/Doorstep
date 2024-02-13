@@ -104,27 +104,25 @@ export const approveMeetingWithCustomer = async (
   }
   await db
     .update(Slots)
-    .set({ slotStatus: "scheduled" })
+    .set({ slotStatus: "Scheduled" })
     .where(eq(Slots.id, slotId));
   return await db
     .update(Meetings)
-    .set({ status: "scheduled" })
+    .set({ status: "Scheduled" })
     .where(eq(Meetings.id, meetingId))
     .returning();
 };
 
 export const rejectMeetingWithCustomer = async (
+  meetingId: string,
   slotId: string,
-  meetingId: string
 ) => {
-  const slot = await db.query.Slots.findFirst({ where: eq(Slots.id, slotId) });
-  if (slot?.slotStatus == "scheduled") {
-    return { message: "This slot has already been booked." };
-  }
+
   return await db
-    .update(Slots)
-    .set({ slotStatus: "rejected" })
-    .where(eq(Slots.id, slotId));
+    .update(Meetings)
+    .set({ status: "Rejected" })
+    .where(eq(Meetings.id, meetingId))
+    .returning();
 };
 
 export const scheduleOfflineMeetingWithProvider = async (

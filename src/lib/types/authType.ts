@@ -39,7 +39,7 @@ interface User {
   meetings?: Meeting[];
 }
 
-interface Meeting {
+export interface Meeting {
   id: string;
   slotId: string;
   userId: string;
