@@ -1,30 +1,37 @@
 "use client";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import React, { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { SlotsCard } from "@/components/Provider/SlotsCard";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { PopoverContent } from "@radix-ui/react-popover";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [mounted, setMounted] = useState(false);
 
   const router = useRouter();
   const { auth } = useAuth();
   const [filteredSlots, setFilteredSlots] = useState(auth?.provider?.slots);
   useEffect(() => {
     if (!date) return;
+    const newDate = new Date(date);
+    if (!mounted) {
+      newDate.setDate(newDate.getDate() - 1);
+      setMounted(true);
+    }
+    newDate.setDate(newDate.getDate() + 1);
+
+    const nextDayISOString = newDate.toISOString().split("T")[0];
+
     const filtered = auth?.provider?.slots?.filter(
-      (slot) => slot.date === date.toISOString().split("T")[0]
+      (slot) => slot.date === nextDayISOString
     );
     setFilteredSlots(filtered || []);
-  }, [date, auth?.provider?.slots]);
+  }, [date, auth?.provider?.slots,mounted]);
   if (!auth?.provider) {
     toast.message("Please Login As Provider");
     setTimeout(() => {
