@@ -21,7 +21,7 @@ const Services = () => {
   useEffect(() => {
     if (!date) return;
     const filtered = auth?.provider?.slots?.filter(
-      (slot) => slot.date === date.toUTCString().split("T")[0]
+      (slot) => slot.date === date.toISOString().split("T")[0]
     );
     setFilteredSlots(filtered || []);
   }, [date, auth?.provider?.slots]);
