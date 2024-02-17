@@ -89,7 +89,7 @@ export async function SlotsCard({
   return (
     <Dialog>
       <Card className="border border-gray-200 rounded-lg shadow-md">
-        <CardHeader className="px-6 py-4 bg-gray-100 border-b border-gray-200 rounded-t-lg">
+        <CardHeader className="px-6 py-4 bg-gray-100 border-b border-gray-200 rounded-t-lg hover:bg-slate-100">
           <div className="flex justify-between items-center ">
             <div className="flex space-x-4">
               <div className="flex items-center space-x-2">

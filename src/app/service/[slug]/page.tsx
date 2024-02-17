@@ -1,8 +1,11 @@
+import { Services } from "@/components/service";
+import { getProviders } from "@/lib/fetchers/getProviders";
 import { serviceExists } from "@/lib/fetchers/serviceExists";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const service = await serviceExists(params.slug);
-  console.log(service);
+  const providerService = params.slug;
+  console.log(providerService);
   if (!service.services.success) {
     return (
       <div className="relative">
@@ -15,5 +18,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </div>
     );
   }
-  return <p>Post: {params.slug}</p>;
+
+  return (
+    <div className="container mx-auto">
+      <Services provider={providerService} />
+    </div>
+  );
 }

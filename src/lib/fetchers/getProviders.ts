@@ -1,0 +1,68 @@
+export const getProviders = async (
+  InputObj: TProviderInputType
+): Promise<{ providers: Provider[] }> => {
+  console.log(InputObj);
+  const response = await fetch("/api/provider", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(InputObj),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to perform search");
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export interface TProviderInputType {
+  page?: number;
+  serviceName?: string;
+  sort?: {
+    rating?: number;
+  };
+}
+
+interface Slot {
+  id: string;
+  providerId: string;
+  date: string;
+  slotTime: string;
+  slotDuration: number;
+  slotStatus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Rating {
+  id: string;
+  userId: string;
+  providerId: string;
+  punctuality: number;
+  professionalism: number;
+  problemResolution: number;
+  efficiency: number;
+  cleanliness: number;
+  responseTime: number;
+  resolutionTime: number;
+  createdAt: string;
+}
+
+interface Provider {
+  id: string;
+  name: string;
+  email: string;
+  lat: number;
+  long: number;
+  offlineDuration: number;
+  serviceName: string;
+  mobile: number;
+  averageRating: number;
+  createdAt: string;
+  updatedAt: string;
+  slots: Slot[];
+  ratings: Rating[];
+}
