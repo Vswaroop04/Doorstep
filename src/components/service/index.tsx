@@ -4,6 +4,7 @@ import { getProviders } from "@/lib/fetchers/getProviders";
 import filterAtom from "@/store/filterAtom";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
+import { ProvidersTable } from "../Provider/RecommendationTable";
 
 export function Services({ provider }: { provider: string }) {
   console.log(provider);
@@ -30,10 +31,11 @@ export function Services({ provider }: { provider: string }) {
   });
   console.log(providers);
   return (
-    <div>
+    <div className="flex-col text-center align-middle">
       {" "}
-      <h1 className="text-2xl font-bold mb-4">Providers for {provider}</h1>
+      <h1 className="text-2xl mb-4 mt-8 py-4">Providers for {provider}</h1>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></ul>
+      {providers?.pages && <ProvidersTable data={providers} />}
     </div>
   );
 }

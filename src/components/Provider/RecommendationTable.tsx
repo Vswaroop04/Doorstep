@@ -44,38 +44,39 @@ import { Provider } from "@/lib/fetchers/providerSignup";
 export const columns: ColumnDef<Provider>[] = [
   {
     accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
-    ),
+    header: () => <div className="text-center">Name</div>,
+    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="text-center">
+          {" "}
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       );
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "serviceName",
-    header: () => <div className="text-right">Service</div>,
+    header: () => <div className="text-center">Service</div>,
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue("serviceName")}</div>
     ),
   },
   {
     accessorKey: "averageRating",
-    header: () => <div className="text-right">Avg Rating</div>,
+    header: () => <div className="text-center">Avg Rating</div>,
     cell: ({ row }) => {
-      const serviceName = row.getValue("serviceName");
+      const serviceName = row.getValue("averageRating");
 
       let formattedServiceName: number;
 
@@ -102,8 +103,11 @@ export const columns: ColumnDef<Provider>[] = [
               <DotsHorizontalIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuContent
+            align="end"
+            className="bg-white "
+          >
+            <DropdownMenuLabel >Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(Provider.id)}
             >
@@ -118,7 +122,8 @@ export const columns: ColumnDef<Provider>[] = [
   },
 ];
 
-export function ProvidersTable(data: any) {
+export function ProvidersTable(providers: any) {
+  const data = providers?.data?.pages[0].providers;
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -146,6 +151,7 @@ export function ProvidersTable(data: any) {
     },
   });
 
+  console.log(table.getRowModel());
   return (
     <div className="w-full">
       <div className="rounded-md border">
