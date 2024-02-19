@@ -40,6 +40,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Provider } from "@/lib/fetchers/providerSignup";
+import { Popover, PopoverTrigger } from "../ui/popover";
+import { PopoverContent } from "@radix-ui/react-popover";
 
 export const columns: ColumnDef<Provider>[] = [
   {
@@ -74,7 +76,20 @@ export const columns: ColumnDef<Provider>[] = [
   },
   {
     accessorKey: "averageRating",
-    header: () => <div className="text-center">Avg Rating</div>,
+    header: ({ column }) => {
+      return (
+        <div className="text-center">
+          {" "}
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Avg Rating
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const serviceName = row.getValue("averageRating");
 
@@ -87,6 +102,27 @@ export const columns: ColumnDef<Provider>[] = [
       }
 
       return <div className="lowercase">{formattedServiceName}</div>;
+    },
+  },
+
+  {
+    id: "slots",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const Provider = row.original;
+      console.log(Provider)
+      return (
+        <Popover>
+          <PopoverTrigger>
+            <Button variant={"destructive"} className="outline border-0 p-2">
+              View Slots
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+
+          </PopoverContent>
+        </Popover>
+      );
     },
   },
   {
@@ -103,11 +139,8 @@ export const columns: ColumnDef<Provider>[] = [
               <DotsHorizontalIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-white "
-          >
-            <DropdownMenuLabel >Actions</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="bg-white ">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(Provider.id)}
             >
@@ -122,8 +155,22 @@ export const columns: ColumnDef<Provider>[] = [
   },
 ];
 
-export function ProvidersTable(providers: any) {
-  const data = providers?.data?.pages[0].providers;
+export function ProvidersTable({
+  providers,
+  fetchNextPage,
+  fetchPreviousPage,
+  hasNextPage,
+}: {
+  providers: any;
+  fetchNextPage: any;
+  fetchPreviousPage: any;
+  hasNextPage: boolean;
+}) {
+  console.log(providers);
+  const [pageNum, setPageNum] = React.useState(0);
+  const curretPage = providers.pages.length - 1;
+  const firstPage = pageNum == 0 ? true : false;
+  const data = providers?.pages[pageNum]?.providers;
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -213,16 +260,19 @@ export function ProvidersTable(providers: any) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => setPageNum(pageNum - 1)}
+            disabled={firstPage}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => {
+              fetchNextPage();
+              setPageNum(pageNum + 1);
+            }}
+            disabled={!hasNextPage || table.getRowModel().rows?.length < 10}
           >
             Next
           </Button>

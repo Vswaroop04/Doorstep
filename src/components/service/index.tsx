@@ -5,6 +5,7 @@ import filterAtom from "@/store/filterAtom";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { ProvidersTable } from "../Provider/RecommendationTable";
+import Loading from "@/components/home/Loading";
 
 export function Services({ provider }: { provider: string }) {
   console.log(provider);
@@ -17,6 +18,8 @@ export function Services({ provider }: { provider: string }) {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    hasPreviousPage,
+    fetchPreviousPage,
   } = useInfiniteQuery({
     queryKey: ["projects"],
     initialPageParam: 1,
@@ -29,13 +32,20 @@ export function Services({ provider }: { provider: string }) {
       return currentPage + 1;
     },
   });
-  console.log(providers);
   return (
     <div className="flex-col text-center align-middle">
       {" "}
       <h1 className="text-2xl mb-4 mt-8 py-4">Providers for {provider}</h1>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></ul>
-      {providers?.pages && <ProvidersTable data={providers} />}
+      {isLoading && <Loading />}
+      {providers?.pages && (
+        <ProvidersTable
+          providers={providers}
+          fetchNextPage={fetchNextPage}
+          hasNextPage={hasNextPage}
+          fetchPreviousPage={fetchPreviousPage}
+        />
+      )}
     </div>
   );
 }
