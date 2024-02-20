@@ -27,6 +27,7 @@ interface providerResponse {
 }
 
 export interface Provider {
+  slots: any;
   id: string;
   name: string;
   email: string;

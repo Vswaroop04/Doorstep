@@ -11,6 +11,7 @@ import {
 } from "./schema";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
+import { sendMail } from "./services/mailService";
 
 export type TypeUser = typeof Users.$inferInsert;
 export type TypeProvider = typeof Providers.$inferInsert;
@@ -32,7 +33,7 @@ export const insertNewProvider = async (provider: TypeProvider) => {
 
     const providerId = providerResult[0].id;
 
-    const slotTimes = [9, 10, 11, 13, 14, 15];
+    const slotTimes = [10, 11, 13, 15, 17, 19];
     const currentDate = format(new Date(), "yyyy-MM-dd");
 
     for (const slotTime of slotTimes) {
@@ -59,7 +60,7 @@ export async function getAllProviderIds(): Promise<string[]> {
 }
 export const createSlots = async (providerId: string) => {
   return db.transaction(async (tx) => {
-    const slotTimes = [9, 10, 11, 13, 14, 15];
+    const slotTimes = [10, 11, 13, 15, 17, 19];
     const currentDate = format(new Date(), "yyyy-MM-dd");
 
     for (const slotTime of slotTimes) {
@@ -106,18 +107,32 @@ export const approveMeetingWithCustomer = async (
     .update(Slots)
     .set({ slotStatus: "Scheduled" })
     .where(eq(Slots.id, slotId));
-  return await db
+  const meetings = await db
     .update(Meetings)
     .set({ status: "Scheduled" })
     .where(eq(Meetings.id, meetingId))
     .returning();
+
+  const meetingsWithUserDetails = await db.query.Meetings.findFirst({
+    where: (meeting) => eq(meeting.id, meetingId),
+    with: {
+      user: true,
+    },
+  });
+  if (meetingsWithUserDetails?.user?.email) {
+    const mail = await sendMail(
+      "Meeting With Provider",
+      meetingsWithUserDetails?.user?.email,
+      "<main> <h1> Meeting </h1></main>"
+    );
+  }
+  return meetings;
 };
 
 export const rejectMeetingWithCustomer = async (
   meetingId: string,
-  slotId: string,
+  slotId: string
 ) => {
-
   return await db
     .update(Meetings)
     .set({ status: "Rejected" })

@@ -6,6 +6,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { ProvidersTable } from "../Provider/RecommendationTable";
 import Loading from "@/components/home/Loading";
+import Image from "next/image";
 
 export function Services({ provider }: { provider: string }) {
   console.log(provider);
@@ -35,16 +36,27 @@ export function Services({ provider }: { provider: string }) {
   return (
     <div className="flex-col text-center align-middle">
       {" "}
-      <h1 className="text-2xl mb-4 mt-8 py-4">Providers for {provider}</h1>
-      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></ul>
       {isLoading && <Loading />}
       {providers?.pages && (
-        <ProvidersTable
-          providers={providers}
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
-          fetchPreviousPage={fetchPreviousPage}
-        />
+        <>
+          <div className="flex justify-between items-center my-5">
+            <h1 className="text-2xl mb-4 mt-8 py-4">
+              Providers for {provider}
+            </h1>
+            {/* <Image
+              src={"/crop-service.jpg"}
+              alt="Service"
+              height={100}
+              width={100}
+            /> */}
+          </div>
+          <ProvidersTable
+            providers={providers}
+            fetchNextPage={fetchNextPage}
+            hasNextPage={hasNextPage}
+            fetchPreviousPage={fetchPreviousPage}
+          />
+        </>
       )}
     </div>
   );

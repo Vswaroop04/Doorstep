@@ -40,9 +40,70 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Provider } from "@/lib/fetchers/providerSignup";
-import { Popover, PopoverTrigger } from "../ui/popover";
-import { PopoverContent } from "@radix-ui/react-popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { RequestSlot } from "../form/RequestSlot";
 
+const Cell = ({ row }: { row: any }) => {
+  const Provider = row.original;
+  const [open, setOpen] = React.useState(false);
+  const [slot, setSlot] = React.useState(false);
+
+  const todayDate = new Date().toISOString().split("T")[0];
+  const currentTime = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
+  return (
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant={"destructive"} className="outline border-0 p-2">
+            View Slots
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="bg-white">
+          <DialogTitle className="p-4 text-center">
+            Slots of {Provider.name}
+          </DialogTitle>
+          <div> Date : {todayDate} </div>
+          <div className="grid grid-cols-4 gap-6">
+            {Provider.slots
+              .filter((slot: any) => slot.date === todayDate)
+              .sort((a: any, b: any) => a.slotTime.localeCompare(b.slotTime))
+              .map((slot: any) => (
+                <>
+                  <Button
+                    variant={"default"}
+                    key={slot.id}
+                    className={`border p-1 outline ${
+                      currentTime > slot.slotTime ? "bg-red-50" : "bg-blue-100"
+                    }`}
+                    onClick={() => {
+                      setSlot(slot);
+                      setOpen(true);
+                    }}
+                    disabled={
+                      currentTime > slot.slotTime || slot.status == "scheduled"
+                    }
+                  >
+                    {slot.slotTime}
+                  </Button>
+                </>
+              ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+      {open && <RequestSlot open={open} setOpen={setOpen} slot={slot} />}
+    </>
+  );
+};
 export const columns: ColumnDef<Provider>[] = [
   {
     accessorKey: "name",
@@ -108,22 +169,7 @@ export const columns: ColumnDef<Provider>[] = [
   {
     id: "slots",
     enableHiding: false,
-    cell: ({ row }) => {
-      const Provider = row.original;
-      console.log(Provider)
-      return (
-        <Popover>
-          <PopoverTrigger>
-            <Button variant={"destructive"} className="outline border-0 p-2">
-              View Slots
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent>
-
-          </PopoverContent>
-        </Popover>
-      );
-    },
+    cell: Cell,
   },
   {
     id: "actions",

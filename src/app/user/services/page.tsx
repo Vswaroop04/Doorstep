@@ -30,30 +30,18 @@ const Services = () => {
       <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">Welcome back!</h2>
-            <p className="text-muted-foreground">
+            <h2 className="text-5xl font-bold tracking-tight p-4">
+              Welcome back!
+            </h2>
+            <p className="text-muted-foreground p-4">
               Here&apos;s a list of your services
             </p>
           </div>
           <div>Hi , {auth.user.name}</div>
         </div>
-        <h2 className="text-2xl font-bold tracking-tight">Offline Schedules</h2>
-        <div className="grid grid-cols-3">
-          {auth?.user?.offlineSchedules?.map((ofsc) => (
-            <OfflineMeetingCard
-              key={ofsc.id}
-              providerName={ofsc.provider?.name}
-              serviceName={ofsc.provider?.serviceName}
-              date={ofsc.date}
-              offlineDuration={ofsc.offlineSlotDuration}
-              offlineSlotTime={ofsc.offlineSlotTime}
-              providerEmail={ofsc.provider?.email}
-              providerMobile={ofsc.provider?.mobile}
-            />
-          ))}
-        </div>
+
         <h2 className="text-2xl font-bold tracking-tight">Meetings</h2>
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 space-x-4 space-y-4 ">
           {auth?.user?.meetings?.map((ofsc) => (
             <MeetingCard
               key={ofsc.id}
@@ -67,6 +55,26 @@ const Services = () => {
               slotDuration={ofsc.slot?.slotDuration}
             />
           ))}
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight">Offline Schedules</h2>
+        <div className="grid grid-cols-3">
+          {auth?.user?.offlineSchedules &&
+          auth?.user?.offlineSchedules.length > 0 ? (
+            auth?.user?.offlineSchedules?.map((ofsc) => (
+              <OfflineMeetingCard
+                key={ofsc.id}
+                providerName={ofsc.provider?.name}
+                serviceName={ofsc.provider?.serviceName}
+                date={ofsc.date}
+                offlineDuration={ofsc.offlineSlotDuration}
+                offlineSlotTime={ofsc.offlineSlotTime}
+                providerEmail={ofsc.provider?.email}
+                providerMobile={ofsc.provider?.mobile}
+              />
+            ))
+          ) : (
+            <div> No Offline Schedules currently </div>
+          )}
         </div>
       </div>
       <div>
