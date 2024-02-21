@@ -7,6 +7,14 @@ import { useAtom } from "jotai";
 import { ProvidersTable } from "../Provider/RecommendationTable";
 import Loading from "@/components/home/Loading";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import SortDropdown from "./sort";
 
 export function Services({ provider }: { provider: string }) {
   console.log(provider);
@@ -22,7 +30,7 @@ export function Services({ provider }: { provider: string }) {
     hasPreviousPage,
     fetchPreviousPage,
   } = useInfiniteQuery({
-    queryKey: ["projects"],
+    queryKey: ["projects", provider, filter],
     initialPageParam: 1,
     queryFn: ({ pageParam }) => {
       let page = pageParam || 1;
@@ -43,12 +51,10 @@ export function Services({ provider }: { provider: string }) {
             <h1 className="text-2xl mb-4 mt-8 py-4">
               Providers for {provider}
             </h1>
-            {/* <Image
-              src={"/crop-service.jpg"}
-              alt="Service"
-              height={100}
-              width={100}
-            /> */}
+          </div>
+          <div className="flex justify-between items-center my-5">
+            <div></div>
+            <SortDropdown />
           </div>
           <ProvidersTable
             providers={providers}

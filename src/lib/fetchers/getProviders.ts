@@ -21,8 +21,11 @@ export const getProviders = async (
 export interface TProviderInputType {
   page?: number;
   serviceName?: string;
+  lat?: number;
+  long?: number;
   sort?: {
     rating?: number;
+    distance?: number;
   };
 }
 

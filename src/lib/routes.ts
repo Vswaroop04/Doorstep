@@ -466,16 +466,15 @@ export async function getProviders(
         averageRating: Providers.averageRating,
         createdAt: Providers.createdAt,
         updatedAt: Providers.updatedAt,
-        distance: sql<number>`(
-          6371 * acos(
-            cos(radians(${lat})) * cos(radians(${Providers.lat})) * cos(radians(${Providers.long}) - radians(${long})) +
-            sin(radians(${lat})) * sin(radians(${Providers.lat}))
-          )
-        )`.as("distance"),
+        distance:
+          sql`(6371 * acos(cos(radians(${lat})) * cos(radians(Providers.lat)) * cos(radians(Providers.long) - radians(${long})) + sin(radians(${lat})) * sin(radians(Providers.lat))))`.as(
+            "distance"
+          ),
       })
       .from(Providers)
       .leftJoin(Slots, eq(Providers.id, Slots.providerId))
       .where(whereClause)
+      .groupBy(Providers.id) // Assuming Providers.id is the unique identifier
       .orderBy(sql`distance`)
       .limit(pageSize)
       .offset(offset);
