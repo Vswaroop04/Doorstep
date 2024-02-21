@@ -47,9 +47,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { RequestSlot } from "../form/RequestSlot";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Cell = ({ row }: { row: any }) => {
   const Provider = row.original;
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [slot, setSlot] = React.useState(false);
 
@@ -187,13 +190,15 @@ export const columns: ColumnDef<Provider>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white ">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(Provider.id)}
-            >
-              Book Appointment
-            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View Provider</DropdownMenuItem>
+            <DropdownMenuItem>
+              {" "}
+              <Button>
+                {" "}
+                <Link href={`/provider/${Provider.id}`}> View Provider</Link>
+              </Button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -7,7 +7,7 @@ export const editOfflineDuration = async (offlineDuration: number) => {
     body: JSON.stringify({ offlineDuration }),
   });
 
-  if (!response.ok) {0
+  if (!response.ok) {
     throw new Error("Failed to perform search");
   }
 
