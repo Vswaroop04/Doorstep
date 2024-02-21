@@ -31,7 +31,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTable } from "@/components/Provider/DataTable";
-import { columns,User } from "@/components/Provider/coloumns";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -68,7 +67,7 @@ const Services = () => {
   //     mobile : data?.user?.mobile
   //     }
   //   })
-  
+
   if (!auth?.provider) {
     toast.message("Please Login As Provider");
     setTimeout(() => {
@@ -180,11 +179,8 @@ const Services = () => {
                         </span>
                       </h2>
                     </div>
-                    <div className="mr-6">
-                      {/* <DataTable
-                        data={auth?.provider?.offlineSchedules}
-                        columns={columns}
-                      /> */}
+                    <div className="mr-12">
+                      <DataTable slots={auth?.provider?.slots || []} />
                     </div>
                   </div>
                   <SheetFooter>

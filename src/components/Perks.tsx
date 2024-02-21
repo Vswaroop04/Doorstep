@@ -1,5 +1,4 @@
-
-import { Axe, Paintbrush2, Plug, Wrench } from "lucide-react";
+import { Axe, NotepadText, Paintbrush2, Plug, Stethoscope, Wrench } from "lucide-react";
 
 export const perks = [
   {
@@ -12,7 +11,7 @@ export const perks = [
   {
     name: "Electrical",
     Icon: Plug,
-    href: "/service/Electrical",
+    href: "/service/Electrecian",
 
     description:
       "Our electrical services ensure safety and reliability. With our expert team, rest assured that your electrical needs will be met with precision and efficiency.",
@@ -21,6 +20,22 @@ export const perks = [
     name: "Carpentry",
     Icon: Axe,
     href: "/service/Carpentry",
+
+    description:
+      "Experience the craftsmanship of our carpentry services. From custom furniture to home renovations, we bring your vision to life with meticulous attention to detail.",
+  },
+  {
+    name: "Tutor",
+    Icon: NotepadText,
+    href: "/service/Tutor",
+
+    description:
+      "Experience the craftsmanship of our carpentry services. From custom furniture to home renovations, we bring your vision to life with meticulous attention to detail.",
+  },
+  {
+    name: "Doctor",
+    Icon: Stethoscope,
+    href: "/service/Doctor",
 
     description:
       "Experience the craftsmanship of our carpentry services. From custom furniture to home renovations, we bring your vision to life with meticulous attention to detail.",

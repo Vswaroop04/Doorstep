@@ -123,7 +123,59 @@ export const approveMeetingWithCustomer = async (
     const mail = await sendMail(
       "Meeting With Provider",
       meetingsWithUserDetails?.user?.email,
-      "<main> <h1> Meeting </h1></main>"
+      `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Meet Call</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Google Meet Call</h1>
+        <p>Please join the call according to your scheduled slot time.</p>
+        <p>Slot Time: <strong>9:00 AM - 10:00 AM</strong></p>
+        <p>Google Meet Link: <a href="https://meet.google.com/avo-bmmx-evu">https://meet.google.com/avo-bmmx-evu</a></p>
+        <p>If you have any questions or need assistance, feel free to contact us at <a href="mailto:contact@doorstep.com">contact@doorstep.com</a>.</p>
+        <p>Thanks, Doorstep</p>
+    </div>
+</body>
+</html>
+`
     );
   }
   return meetings;

@@ -182,7 +182,7 @@ export async function SlotsCard({
                     <div className="border-green-500 text-green-500 p-1">
                       Scheduled
                     </div>
-                  ) : meeting.status === "Rejected" ? (
+                  ) : meeting.status === ("Rejected" || "rejected") ? (
                     <div className="border-red-500 text-red-500 p-1">
                       Rejected
                     </div>

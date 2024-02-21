@@ -1,4 +1,4 @@
-import { ProviderDash } from "@/components/Provider/ProviderDash";
+import ProviderDash from "@/components/Provider/ProviderDash";
 
 const page = ({ params }: { params: { slug: string } }) => {
   const providerId = params.slug;

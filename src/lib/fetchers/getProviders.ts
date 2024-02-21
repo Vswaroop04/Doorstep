@@ -1,6 +1,8 @@
+import { TypeOfflineSchedules } from "../routes";
+
 export const getProviders = async (
   InputObj: TProviderInputType
-): Promise<{ providers: Provider[] }> => {
+): Promise<{ providers: TypeProviderObj[] }> => {
   console.log(InputObj);
   const response = await fetch("/api/provider", {
     method: "POST",
@@ -54,13 +56,14 @@ interface Rating {
   createdAt: string;
 }
 
-interface Provider {
+export interface TypeProviderObj {
   id: string;
   name: string;
   email: string;
   lat: number;
   long: number;
   offlineDuration: number;
+  offlineSchedules: TypeOfflineSchedules[];
   serviceName: string;
   mobile: number;
   averageRating: number;

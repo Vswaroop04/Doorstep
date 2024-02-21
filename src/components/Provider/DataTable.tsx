@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -16,15 +15,71 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { ColumnDef } from "@tanstack/react-table";
+import { Checkbox } from "../ui/checkbox";
+
+export type User = {
+  name: string;
+  email: string;
+  mobile: number;
+  priority: number;
+};
+
+export const columns: ColumnDef<User>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => {
+      console.log(row);
+      return <div className="lowercase">{row.getValue("email")}</div>;
+    },
+  },
+  {
+    accessorKey: "email",
+    header: "Email",
+  },
+  {
+    accessorKey: "mobile",
+    header: "Mobile",
+  },
+  {
+    accessorKey: "priority",
+    header: "Priority",
+  },
+];
+
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  slots: any[];
 }
 
 export function DataTable<TData, TValue>({
-  columns,
-  data,
+  slots,
 }: DataTableProps<TData, TValue>) {
+  const slotsWithMeetings = slots.filter((slot) => slot.meetings.length > 0);
+  const data = slotsWithMeetings.map((slot) => slot.meetings[0].user);
+  console.log(data);
   const table = useReactTable({
     data,
     columns,

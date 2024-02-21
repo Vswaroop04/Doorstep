@@ -10,6 +10,7 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { SortAsc, SortDescIcon } from "lucide-react";
 
 const SortDropdown = () => {
   const [filter, setFilterData] = useAtom(filterAtom);
@@ -52,7 +53,8 @@ const SortDropdown = () => {
         <DropdownMenuTrigger asChild>
           <div className="mb-0">
             <Button variant={"secondary"} className="outline">
-              Sort By
+              Sort By {"  "}
+              <SortDescIcon />
             </Button>
             {sortOptions && <div></div>}
           </div>
