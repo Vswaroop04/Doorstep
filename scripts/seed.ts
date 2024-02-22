@@ -21,7 +21,6 @@ async function testFunctions() {
       mobile: 1234567890,
     };
     const createdUser = await insertNewUser(user);
-    console.log("User created:", createdUser);
 
     // Create a provider
     const provider = {
@@ -35,31 +34,25 @@ async function testFunctions() {
       serviceName : "Plumber"
     };
     const createdProvider = await insertNewProvider(provider);
-    console.log("Provider created:", createdProvider);
 
     // Get a list of providers (pagination example)
     const page = 1;
     const providersList = await getProviders(page);
-    console.log("Providers list:", providersList);
 
     const providerEmail = "testprovider1@example.com";
     const providerPassword = "testpassword";
     const providerInfo = await getProvider(providerEmail, providerPassword);
-    console.log("Provider information:", providerInfo);
 
     const slotId = providerInfo.provider?.slots[0]?.id;
     const userId = createdUser[0].id;
     if (slotId) {
       const meeting = await scheduleMeetingWithProvider(slotId, userId);
-      console.log("Meeting scheduled:", meeting);
       if ("message" in meeting) {
-        console.log("Message:", meeting.message);
       } else {
         const approvedMeeting = await approveMeetingWithCustomer(
           meeting[0]?.id,
           slotId
         );
-        console.log("Meeting approved:", approvedMeeting);
       }
     }
     const offlineMeeting = {
@@ -73,7 +66,6 @@ async function testFunctions() {
     const offlineMeetingResult = await scheduleOfflineMeetingWithProvider(
       offlineMeeting
     );
-    console.log("Offline meeting scheduled:", offlineMeetingResult);
     const feedback = {
       userId: createdUser[0].id,
       providerId: createdProvider[0].id,
@@ -86,13 +78,10 @@ async function testFunctions() {
       resolutionTime: 5,
     };
     const feedbackResult = await userFeedback(feedback);
-    console.log("User feedback submitted:", feedbackResult);
 
     const providerInfo2 = await getProvider(providerEmail, providerPassword);
-    console.log("Provider information after some events:", providerInfo2);
 
     const userInfo = await getUser(user.email, user.password)
-    console.log("userInfo" + userInfo)
   } catch (error) {
     console.error("Error:", error);
   }

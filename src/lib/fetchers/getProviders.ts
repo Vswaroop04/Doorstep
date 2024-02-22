@@ -3,7 +3,6 @@ import { TypeOfflineSchedules } from "../routes";
 export const getProviders = async (
   InputObj: TProviderInputType
 ): Promise<{ providers: TypeProviderObj[] }> => {
-  console.log(InputObj);
   const response = await fetch("/api/provider", {
     method: "POST",
     headers: {

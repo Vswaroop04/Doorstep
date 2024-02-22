@@ -25,6 +25,7 @@ export const insertNewUser = async (user: TypeUser) => {
   return await db.insert(Users).values(user).returning();
 };
 export const insertNewProvider = async (provider: TypeProvider) => {
+  provider.averageRating = 0
   return db.transaction(async (tx) => {
     const providerResult = await tx
       .insert(Providers)
@@ -507,8 +508,8 @@ export async function getProviders(
   } else if (sort?.rating) {
     orderByClause =
       sort.rating === 1
-        ? asc(Providers.averageRating)
-        : desc(Providers.averageRating);
+        ? desc(Providers.averageRating)
+        : asc(Providers.averageRating);
   }
   if (serviceName) {
     whereClause = eq(Providers.serviceName, serviceName);

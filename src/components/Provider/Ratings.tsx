@@ -18,7 +18,6 @@ const Ratings = ({ provider }: { provider: any }) => {
         date: category,
         Rating: value,
       }));
-      console.log(data);
       setChartData(data);
     };
 

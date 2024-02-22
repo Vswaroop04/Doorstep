@@ -17,7 +17,6 @@ import {
 import SortDropdown from "./sort";
 
 export function Services({ provider }: { provider: string }) {
-  console.log(provider);
   const [filter, setFilterData] = useAtom(filterAtom);
 
   const {

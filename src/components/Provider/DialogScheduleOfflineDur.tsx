@@ -53,7 +53,6 @@ export function ScheduleOffDurDialog({
         offlineSlotDuration: newOfflineSlotDuration,
         priority,
       });
-      console.log(offlineSchedule);
       setOpen(false);
       toast.success("Offline Schedule Created Succesfully");
       setTimeout(() => {

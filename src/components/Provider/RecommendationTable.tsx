@@ -217,7 +217,6 @@ export function ProvidersTable({
   fetchPreviousPage: any;
   hasNextPage: boolean;
 }) {
-  console.log(providers);
   const [pageNum, setPageNum] = React.useState(0);
   const curretPage = providers.pages.length - 1;
   const firstPage = pageNum == 0 ? true : false;
@@ -249,7 +248,6 @@ export function ProvidersTable({
     },
   });
 
-  console.log(table.getRowModel());
   return (
     <div className="w-full">
       <div className="rounded-md border">
