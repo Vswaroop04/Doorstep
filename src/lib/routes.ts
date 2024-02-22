@@ -467,6 +467,14 @@ export async function userFeedback(feedback: TypeUserFeedback) {
   return await db.insert(Ratings).values(feedback).returning();
 }
 
+export async function FeedbackExists(providerId: string, userId: string) {
+  const ratingExist = await db.query.Ratings.findFirst({
+    where: (ratings, { eq }) =>
+      eq(ratings.userId, userId) && eq(ratings.providerId, providerId),
+  });
+
+  return !!ratingExist;
+}
 export async function getSlots(ProviderId: string) {
   return await db.query.Slots.findMany({
     where: (slots, { eq }) => eq(slots.providerId, ProviderId),

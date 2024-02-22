@@ -9,84 +9,38 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { MailIcon } from "lucide-react";
+import { OfflineSchedule } from "@/lib/types/authType";
+import OfflineSchedulesUser from "./OfflineScheduleWithAvatar";
 
 export function OfflineMeetingCard({
-  providerName,
-  serviceName,
-  providerEmail,
-  providerMobile,
-  offlineSlotTime,
-  offlineDuration,
-  date,
+  offlineSchedules,
 }: {
-  providerName?: string;
-  serviceName?: string;
-  providerEmail?: string;
-  providerMobile?: number;
-  offlineSlotTime?: string;
-  offlineDuration?: number;
-  date?: string;
-}) {
+  offlineSchedules?: OfflineSchedule[];
+  }) {
+  console.log(offlineSchedules)
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex-row items-center ">
-             <CardTitle>{date}</CardTitle>
-            <h1 className="text-2xl font-bold">{providerName}</h1>
-          </div>
-          <div>
-            <div>{offlineSlotTime}</div>
-            <div>{offlineDuration} Hr(s)</div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <CardDescription>{serviceName}</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="grid gap-2">
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <Avatar className="rounded-lg pt-2">
-              <MailIcon />
-            </Avatar>
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {providerEmail || "NA"}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between space-x-4">
-          <div className="flex items-center space-x-4">
-            <Avatar className="rounded-lg pt-2">
-              <MobileIcon className="w-6 h-6" />
-            </Avatar>
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {providerMobile || "NA"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <div>
+      <Card className="">
+        <CardHeader>
+          <CardDescription className="flex justify-center mx-auto">
+            Here is the list of offline schedules
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {offlineSchedules?.map((ofsc) => (
+            <OfflineSchedulesUser
+              key={ofsc.id}
+              providerId={ofsc.providerId}
+              providerEmail={ofsc.provider?.email || ""}
+              providerName={ofsc?.provider?.name || ""}
+              providerMobile={ofsc?.provider?.mobile || 0}
+              offlinsSlotTime={ofsc.offlineSlotTime}
+              offlineSlotDuration={ofsc.offlineSlotDuration.toString() || ""}
+              date={ofsc.date}
+            />
+          ))}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

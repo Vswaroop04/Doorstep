@@ -30,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTable } from "@/components/Provider/DataTable";
+import DataTable from "@/components/Provider/DataTable";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -40,6 +40,10 @@ const Services = () => {
   const router = useRouter();
   const { auth } = useAuth();
   const [filteredSlots, setFilteredSlots] = useState(auth?.provider?.slots);
+  const [filteredOfsc, setfilteredOfsc] = useState(
+    auth?.provider?.offlineSchedules
+  );
+
   const [offlineDuration, setOfflineDuration] = useState<number>(
     auth?.provider?.offlineDuration || 0
   );
@@ -57,6 +61,10 @@ const Services = () => {
     const filtered = auth?.provider?.slots?.filter(
       (slot) => slot.date === nextDayISOString
     );
+    const filteredofs = auth?.provider?.offlineSchedules?.filter(
+      (slot) => slot.date === nextDayISOString
+    );
+    setfilteredOfsc(filteredofs);
     setFilteredSlots(filtered || []);
   }, [date, auth?.provider?.slots]);
 
@@ -125,18 +133,16 @@ const Services = () => {
                   </PopoverContent>
                 </div>
               </div>
-              <div className="grid grid-cols-4 gap-4">
-                {filteredSlots?.map((slot) => (
-                  <SlotsCard
-                    key={`${slot.date}-${slot.id}`}
-                    date={slot?.date}
-                    slotTime={slot?.slotTime}
-                    slotStatus={slot?.slotStatus}
-                    slotDuration={slot?.slotDuration}
-                    meetings={slot.meetings}
-                  />
-                ))}
-              </div>
+              {filteredSlots?.map((slot) => (
+                <SlotsCard
+                  key={`${slot.date}-${slot.id}`}
+                  date={slot?.date}
+                  slotTime={slot?.slotTime}
+                  slotStatus={slot?.slotStatus}
+                  slotDuration={slot?.slotDuration}
+                  meetings={slot.meetings}
+                />
+              ))}
             </div>
           </Popover>
           <div className="p-6 pt-0">
@@ -157,37 +163,51 @@ const Services = () => {
                   </button>
                 </SheetTrigger>
                 <SheetContent side={"right"}>
-                  <SheetHeader>
-                    <SheetTitle>Schedule Offline Meeting</SheetTitle>
-                    <SheetDescription>
-                      Here are some of the suggestions where you can schedule
-                      offline meeting wit your offline duration period
-                    </SheetDescription>
-                  </SheetHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="flex justify-between items-center mx-44">
-                      <h2 className="flex items-center whitespace-nowrap">
-                        <span className="mr-2">Current Offline Duration :</span>
-                        <span className="font-bold">{offlineDuration} hrs</span>
-                        <span
-                          className="ml-2 cursor-pointer"
-                          onClick={() => {
-                            setOpenPopup(true);
-                          }}
-                        >
-                          <Edit />
-                        </span>
-                      </h2>
+                  <div className="">
+                    <SheetHeader>
+                      <SheetTitle className="flex text-center justify-between mx-auto align-middle text-2xl">
+                        Schedule Offline Meeting
+                      </SheetTitle>
+                      <SheetDescription className="flex items-center justify-center mx-auto">
+                        Here are some of the suggestions where you can schedule
+                        offline meeting wit your offline duration period
+                      </SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="flex justify-between items-center mx-auto">
+                        <h2 className="flex items-center whitespace-nowrap">
+                          <span className="mr-2">
+                            Current Offline Duration :
+                          </span>
+                          <span className="font-bold">
+                            {offlineDuration} hrs
+                          </span>
+                          <span
+                            className="ml-2 cursor-pointer"
+                            onClick={() => {
+                              setOpenPopup(true);
+                            }}
+                          >
+                            <SheetClose asChild>
+                              <Edit />
+                            </SheetClose>
+                          </span>
+                        </h2>
+                      </div>
+                      <div className="">
+                        <DataTable
+                          slots={filteredSlots || []}
+                          offlineSchedules={auth?.provider?.offlineSchedules}
+                          offlineDuration={offlineDuration}
+                        />
+                      </div>
                     </div>
-                    <div className="mr-12">
-                      <DataTable slots={auth?.provider?.slots || []} />
-                    </div>
+                    <SheetFooter>
+                      <SheetClose asChild>
+                        <Button type="submit">Save changes</Button>
+                      </SheetClose>
+                    </SheetFooter>
                   </div>
-                  <SheetFooter>
-                    <SheetClose asChild>
-                      <Button type="submit">Save changes</Button>
-                    </SheetClose>
-                  </SheetFooter>
                 </SheetContent>
               </div>
             </div>
@@ -205,7 +225,7 @@ const Services = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {auth.provider.offlineSchedules?.map((meeting) => (
+                {filteredOfsc?.map((meeting) => (
                   <TableRow key={meeting.id}>
                     <TableCell>{meeting?.date}</TableCell>
                     <TableCell>{meeting?.offlineSlotTime}</TableCell>

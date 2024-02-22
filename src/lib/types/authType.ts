@@ -26,7 +26,7 @@ interface Provider {
   offlineSchedules?: OfflineSchedule[];
   ratings?: Rating[];
 }
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -51,7 +51,7 @@ export interface Meeting {
   provider?: Provider;
 }
 
-interface Slot {
+export interface Slot {
   id: string;
   providerId: string;
   date: string;
@@ -60,11 +60,11 @@ interface Slot {
   slotStatus: string;
   createdAt: string;
   updatedAt: string;
-  meetings: Meeting[];
+  meetings?: Meeting[];
   provider?: Provider;
 }
 
-interface OfflineSchedule {
+export interface OfflineSchedule {
   id: string;
   userId: string;
   providerId: string;
