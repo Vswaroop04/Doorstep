@@ -133,16 +133,18 @@ const Services = () => {
                   </PopoverContent>
                 </div>
               </div>
-              {filteredSlots?.map((slot) => (
-                <SlotsCard
-                  key={`${slot.date}-${slot.id}`}
-                  date={slot?.date}
-                  slotTime={slot?.slotTime}
-                  slotStatus={slot?.slotStatus}
-                  slotDuration={slot?.slotDuration}
-                  meetings={slot.meetings}
-                />
-              ))}
+              <div className="grid grid-cols-4 gap-4">
+                {filteredSlots?.map((slot) => (
+                  <SlotsCard
+                    key={`${slot.date}-${slot.id}`}
+                    date={slot?.date}
+                    slotTime={slot?.slotTime}
+                    slotStatus={slot?.slotStatus}
+                    slotDuration={slot?.slotDuration}
+                    meetings={slot.meetings}
+                  />
+                ))}
+              </div>
             </div>
           </Popover>
           <div className="p-6 pt-0">
