@@ -24,7 +24,6 @@ export const providerFormSchema = z.object({
   password: z.string().min(6, {
     message: "Password must be at least 6 characters.",
   }),
-  offlineDuration: z.string().transform((v) => Number(v) || 0),
   serviceName: z.string(),
   mobile: z
     .string()

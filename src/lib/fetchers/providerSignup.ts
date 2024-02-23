@@ -45,6 +45,5 @@ interface providerReq {
   name: string;
   lat: number;
   long: number;
-  offlineDuration: number;
   mobile: number;
 }

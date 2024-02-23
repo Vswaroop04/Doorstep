@@ -5,9 +5,12 @@ import useAuth from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { SlotsCard } from "@/components/Provider/SlotsCard";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { CalendarCheck2, CalendarIcon, Edit } from "lucide-react";
-import { PopoverContent } from "@radix-ui/react-popover";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -93,7 +96,7 @@ const Services = () => {
   return (
     <Suspense fallback={<div className="absolute left-1/2">Loading...</div>}>
       <Sheet key={"right"}>
-        <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex">
+        <div className="h-full flex-1 flex-col space-y-8 p-8 md:flex ">
           {" "}
           <section className="p-4">
             <div className="flex items-center justify-between space-y-2">
@@ -109,7 +112,7 @@ const Services = () => {
             </div>
           </section>
           <Popover>
-            <div className="p-6 pt-0">
+            <div className="p-6">
               <div className="flex items-center justify-between space-y-2">
                 <div>
                   <h2 className="text-3xl font-semibold tracking-tight my-4">
@@ -121,8 +124,8 @@ const Services = () => {
                     <CalendarIcon className="ml-auto h-6 w-6 opacity-50 cursor-pointer" />
                   </PopoverTrigger>{" "}
                   <PopoverContent
-                    className="w-auto p-0 bg-slate-300 mr-4"
-                    align="start"
+                    className="w-auto p-0 bg-slate-300 mr-4 mt-10"
+                    align="center"
                   >
                     <Calendar
                       mode="single"
@@ -167,20 +170,14 @@ const Services = () => {
                 <SheetContent side={"right"}>
                   <div className="">
                     <SheetHeader>
-                      <SheetTitle className="flex text-center justify-between mx-auto align-middle text-2xl">
-                        Schedule Offline Meeting
+                      <SheetTitle className="flex justify-center mx-auto text-xl">
+                        <span className="ml-8">Schedule Offline Meeting</span>
                       </SheetTitle>
-                      <SheetDescription className="flex items-center justify-center mx-auto">
-                        Here are some of the suggestions where you can schedule
-                        offline meeting wit your offline duration period
-                      </SheetDescription>
                     </SheetHeader>
                     <div className="grid gap-4 py-4">
                       <div className="flex justify-between items-center mx-auto">
                         <h2 className="flex items-center whitespace-nowrap">
-                          <span className="mr-2">
-                            Current Offline Duration :
-                          </span>
+                          <span>Current Offline Duration :</span>
                           <span className="font-bold">
                             {offlineDuration} hrs
                           </span>

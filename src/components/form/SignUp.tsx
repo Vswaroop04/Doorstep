@@ -391,9 +391,7 @@ export default function SignUpComponent() {
                     name="serviceName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="mobile">
-                          Offline Duration (in Hrs)
-                        </FormLabel>
+                        <FormLabel htmlFor="mobile">Service</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -413,26 +411,6 @@ export default function SignUpComponent() {
                               ))}
                             </SelectContent>
                           </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={ProviderSignupForm.control}
-                    name="offlineDuration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="mobile">
-                          Offline Duration (in Hrs)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            id="number"
-                            placeholder="1.5"
-                            className="text-slate-900"
-                            {...field}
-                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

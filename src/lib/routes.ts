@@ -25,7 +25,7 @@ export const insertNewUser = async (user: TypeUser) => {
   return await db.insert(Users).values(user).returning();
 };
 export const insertNewProvider = async (provider: TypeProvider) => {
-  provider.averageRating = 0
+  provider.averageRating = 0;
   return db.transaction(async (tx) => {
     const providerResult = await tx
       .insert(Providers)
@@ -169,7 +169,7 @@ export const approveMeetingWithCustomer = async (
     <div class="container">
         <h1>Welcome to the Google Meet Call</h1>
         <p>Please join the call according to your scheduled slot time.</p>
-        <p>Slot Time: <strong>9:00 AM - 10:00 AM</strong></p>
+        <p>Slot Time: <strong> ${slot?.slotTime} </strong></p>
         <p>Google Meet Link: <a href="https://meet.google.com/avo-bmmx-evu">https://meet.google.com/avo-bmmx-evu</a></p>
         <p>If you have any questions or need assistance, feel free to contact us at <a href="mailto:contact@doorstep.com">contact@doorstep.com</a>.</p>
         <p>Thanks, Doorstep</p>

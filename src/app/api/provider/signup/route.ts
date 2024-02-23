@@ -9,12 +9,9 @@ const TypeReqProviderSignUp = z.object({
   email: z.string().email(),
   password: z.string(),
   lat: z.number(),
-  serviceName : z.string(),
+  serviceName: z.string(),
   long: z.number(),
-  offlineDuration: z.number(),
-  mobile: z.number().refine((value) => /^\d{10}$/.test(value.toString()), {
-    message: "Invalid mobile number",
-  }),
+  mobile: z.number(),
 });
 
 export async function POST(req: NextRequest) {
@@ -26,6 +23,7 @@ export async function POST(req: NextRequest) {
     const Provider = await insertNewProvider({
       ...withoutpwdprovider,
       password: hashedPassword,
+      offlineDuration: 2,
     });
     const providerWithPwd = Provider[0];
     if ("message" in Provider) {

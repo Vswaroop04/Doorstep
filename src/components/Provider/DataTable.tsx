@@ -103,41 +103,17 @@ const Cell = ({ row }: { row: any }) => {
 const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Name
-        <CaretSortIcon className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: ({ column }) => <Button variant="ghost">Name</Button>,
     cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Email
-        <CaretSortIcon className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: ({ column }) => <Button variant="ghost">Email</Button>,
     cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
   },
   {
     accessorKey: "mobile",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        Mobile
-        <CaretSortIcon className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+    header: ({ column }) => <Button variant="ghost">Mobile</Button>,
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue("mobile")}</div>
     ),
@@ -244,9 +220,10 @@ const DataTableDemo: React.FC<DataTableProps> = ({
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-screen-lg mx-auto">
+      {" "}
       <div className="flex items-center justify-center pt-4 text-xl font-bold underline align-middle mx-auto">
-        Offline Schedule Suggestion
+        Offline Schedule Suggestion/s
       </div>
       <div className="flex items-center justify-center mx-auto pb-4 pt-2">
         We recommend using the following suggestions for your offline schedules,
