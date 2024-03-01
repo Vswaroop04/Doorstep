@@ -1,4 +1,4 @@
-import { createSlots, getAllProviderIds } from "@/lib/routes";
+import { createSlots, getAllProviderSlots } from "@/lib/routes";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const providerIds = await getAllProviderIds();
+    const providerIds = await getAllProviderSlots();
     const promises = providerIds.map((providerId) => createSlots(providerId));
 
     await Promise.all(promises);

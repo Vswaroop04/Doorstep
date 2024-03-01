@@ -34,34 +34,48 @@ export const insertNewProvider = async (provider: TypeProvider) => {
 
     const providerId = providerResult[0].id;
 
-    const slotTimes = [10, 11, 13, 15, 17, 19];
+    const slotTimes = provider?.slots;
     const currentDate = format(new Date(), "yyyy-MM-dd");
 
-    for (const slotTime of slotTimes) {
-      await tx.insert(Slots).values({
-        providerId: providerId,
-        date: currentDate,
-        slotTime: `${slotTime}:00:00`,
-        slotDuration: 1,
-        slotStatus: "Active",
-        createdAt: sql`NOW()`,
-        updatedAt: sql`NOW()`,
-      });
+    if (slotTimes) {
+      for (const slotTime of slotTimes) {
+        await tx.insert(Slots).values({
+          providerId: providerId,
+          date: currentDate,
+          slotTime: `${slotTime}:00:00`,
+          slotDuration: 1,
+          slotStatus: "Active",
+          createdAt: sql`NOW()`,
+          updatedAt: sql`NOW()`,
+        });
+      }
     }
 
     return providerResult;
   });
 };
 
-export async function getAllProviderIds(): Promise<string[]> {
+export async function getAllProviderSlots(): Promise<
+  { providerId: string; slots: number[] }[]
+> {
   const result = await db.query.Providers.findMany({
-    columns: { id: true },
+    columns: { id: true, slots: true },
   });
-  return result.map((provider: { id: string }) => provider.id);
+  return result.map((provider) => ({
+    providerId: provider.id,
+    slots: provider?.slots || [9, 10, 11, 12, 1, 2, 3, 4],
+  }));
 }
-export const createSlots = async (providerId: string) => {
+
+export const createSlots = async ({
+  providerId,
+  slots,
+}: {
+  providerId: string;
+  slots: number[];
+}) => {
   return db.transaction(async (tx) => {
-    const slotTimes = [10, 11, 13, 15, 17, 19];
+    const slotTimes = slots;
     const currentDate = format(new Date(), "yyyy-MM-dd");
 
     for (const slotTime of slotTimes) {
@@ -202,7 +216,9 @@ export const scheduleOfflineMeetingWithProvider = async (
 export const editProvider = async (
   providerId: string,
   offlineDuration?: number,
-  slots?: string[]
+  slots?: number[],
+  onlinePrice?: number,
+  offlinePrice?: number
 ) => {
   if (offlineDuration) {
     return await db
@@ -211,10 +227,26 @@ export const editProvider = async (
       .where(eq(Providers.id, providerId))
       .returning();
   }
+  if (onlinePrice) {
+    return await db
+      .update(Providers)
+      .set({ onlinePrice })
+      .where(eq(Providers.id, providerId))
+      .returning();
+  }
+  if (offlinePrice) {
+    return await db
+      .update(Providers)
+      .set({ offlinePrice })
+      .where(eq(Providers.id, providerId))
+      .returning();
+  }
   if (slots) {
-    await db.delete(Slots).where(eq(Slots.providerId, providerId));
+    const currentDate = format(new Date(), "yyyy-MM-dd");
+    await db
+      .delete(Slots)
+      .where(eq(Slots.providerId, providerId) && eq(Slots.date, currentDate));
     for (const slotTime of slots) {
-      const currentDate = format(new Date(), "yyyy-MM-dd");
       await db.insert(Slots).values({
         providerId: providerId,
         date: currentDate,
@@ -225,7 +257,12 @@ export const editProvider = async (
         updatedAt: sql`NOW()`,
       });
     }
-    return { message: "Slots edited the provider!" };
+    const newSlot = await db
+      .update(Providers)
+      .set({ slots })
+      .where(eq(Providers.id, providerId))
+      .returning();
+    return { message: "Slots edited the provider!", newSlot };
   }
   return { message: "Successfully edited the provider!" };
 };

@@ -11,7 +11,10 @@ const TypeReqProviderSignUp = z.object({
   lat: z.number(),
   serviceName: z.string(),
   long: z.number(),
+  onlinePrice: z.number(),
+  offlinePrice: z.number(),
   mobile: z.number(),
+  slots: z.array(z.number()),
 });
 
 export async function POST(req: NextRequest) {

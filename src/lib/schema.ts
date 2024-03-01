@@ -36,8 +36,8 @@ export const Users = pgTable(
     name: text("name").notNull(),
     email: text("email").notNull(),
     password: text("password").notNull(),
-    lat: customFloat("lat"),
-    long: customFloat("long"),
+    lat: customFloat("lat").notNull(),
+    long: customFloat("long").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
@@ -47,7 +47,11 @@ export const Users = pgTable(
     };
   }
 );
-
+const customNumArray = customType<{ data: number[] }>({
+  dataType() {
+    return "integer[]";
+  },
+});
 export const Providers = pgTable(
   "providers",
   {
@@ -57,10 +61,13 @@ export const Providers = pgTable(
     email: text("email").notNull(),
     lat: customFloat("lat").notNull(),
     long: customFloat("long").notNull(),
-    offlineDuration: customFloat("offlineDuration"),
+    offlineDuration: customFloat("offlineDuration").notNull(),
+    onlinePrice: customFloat("onlinePrice").notNull(),
+    slots: customNumArray("slots").notNull(),
+    offlinePrice: customFloat("offlinePrice").notNull(),
     serviceName: text("serviceName").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
-    averageRating :  customFloat("averageRating"),
+    averageRating: customFloat("averageRating"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

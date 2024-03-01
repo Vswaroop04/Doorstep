@@ -1,0 +1,13 @@
+                                 List of databases
+   Name    |    Owner    | Encoding | Collate | Ctype |      Access privileges      
+-----------+-------------+----------+---------+-------+-----------------------------
+ postgres  | cloud_admin | UTF8     | C       | C     | 
+ template0 | cloud_admin | UTF8     | C       | C     | =c/cloud_admin             +
+           |             |          |         |       | cloud_admin=CTc/cloud_admin
+ template1 | cloud_admin | UTF8     | C       | C     | =c/cloud_admin             +
+           |             |          |         |       | cloud_admin=CTc/cloud_admin
+ verceldb  | default     | UTF8     | C       | C     | =Tc/default                +
+           |             |          |         |       | default=CTc/default        +
+           |             |          |         |       | neon_superuser=CTc/default
+(4 rows)
+
