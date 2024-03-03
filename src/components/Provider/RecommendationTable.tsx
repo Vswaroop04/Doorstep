@@ -139,6 +139,20 @@ export const columns: ColumnDef<Provider>[] = [
     ),
   },
   {
+    accessorKey: "onlinePrice",
+    header: () => <div className="text-center">Online Price</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("onlinePrice")} $</div>
+    ),
+  },
+  {
+    accessorKey: "offlinePrice",
+    header: () => <div className="text-center">Offline Price</div>,
+    cell: ({ row }) => (
+      <div className="lowercase">{row.getValue("offlinePrice")} $</div>
+    ),
+  },
+  {
     accessorKey: "averageRating",
     header: ({ column }) => {
       return (
@@ -154,6 +168,7 @@ export const columns: ColumnDef<Provider>[] = [
         </div>
       );
     },
+
     cell: ({ row }) => {
       const serviceName = row.getValue("averageRating");
 

@@ -28,14 +28,14 @@ import {
 import { RequestSlot } from "../form/RequestSlot";
 const ProviderDash = ({ providerId }: { providerId: string }) => {
   const router = useRouter();
-   const [open, setOpen] = useState(false);
-   const [slot, setSlot] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [slot, setSlot] = useState(false);
 
-   const currentTime = new Date().toLocaleTimeString([], {
-     hour: "2-digit",
-     minute: "2-digit",
-     hour12: false,
-   });
+  const currentTime = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
   const [provider, setProvider] = useState<TypeProviderObj>();
   const todayDate = new Date().toISOString().split("T")[0];
 
@@ -81,6 +81,16 @@ const ProviderDash = ({ providerId }: { providerId: string }) => {
 
               <p className="text-sm text-gray-500 py-1">{provider.email}</p>
               <p className="text-sm text-gray-500 py-1">{provider.mobile}</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="rounded-t-lg rounded-l-lg px-4 py-2 text-sm font-medium text-white bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <div>Online Price</div>
+                <div className="mt-1">$ {provider.onlinePrice}</div>
+              </div>
+              <div className="rounded-t-lg rounded-r-lg px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <div>Offline Price</div>
+                <div className="mt-1">$ {provider.offlinePrice}</div>
+              </div>
             </div>
           </div>
 
@@ -156,10 +166,8 @@ const ProviderDash = ({ providerId }: { providerId: string }) => {
                   <CardContent>
                     <div className="text-2xl font-bold">
                       {" "}
-                      {provider.slots?.length > 0
-                        ? provider.slots?.filter(
-                            (slot: any) => slot.date === todayDate
-                          ).length
+                      {provider?.slotsArray?.length
+                        ? provider?.slotsArray?.length
                         : 4}
                       /Day
                     </div>

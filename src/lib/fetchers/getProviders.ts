@@ -61,10 +61,13 @@ export interface TypeProviderObj {
   email: string;
   lat: number;
   long: number;
+  slotsArray: number[];
   offlineDuration: number;
   offlineSchedules: TypeOfflineSchedules[];
   serviceName: string;
   mobile: number;
+  onlinePrice: number;
+  offlinePrice: number;
   averageRating: number;
   createdAt: string;
   updatedAt: string;

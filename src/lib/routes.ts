@@ -222,28 +222,28 @@ export const editProvider = async (
   name?: string
 ) => {
   if (name) {
-    return await db
+    await db
       .update(Providers)
       .set({ name })
       .where(eq(Providers.id, providerId))
       .returning();
   }
   if (offlineDuration) {
-    return await db
+    await db
       .update(Providers)
       .set({ offlineDuration })
       .where(eq(Providers.id, providerId))
       .returning();
   }
   if (onlinePrice) {
-    return await db
+    await db
       .update(Providers)
       .set({ onlinePrice })
       .where(eq(Providers.id, providerId))
       .returning();
   }
   if (offlinePrice) {
-    return await db
+    await db
       .update(Providers)
       .set({ offlinePrice })
       .where(eq(Providers.id, providerId))
@@ -295,10 +295,10 @@ export const editProvider = async (
 };
 
 export const searchService = async (serviceName: string) => {
-  return await db
-    .select()
-    .from(Services)
-    .where(sql`${Services.serviceName} LIKE ${"%" + serviceName + "%"}`);
+  const searchTerm = serviceName.toLowerCase();
+  return await db.query.Services.findMany({
+    where: (game, { ilike }) => ilike(game.serviceName, `%${searchTerm}%`),
+  });
 };
 
 export const serviceExists = async (serviceName: string) => {

@@ -21,14 +21,16 @@ export async function POST(req: NextRequest) {
       );
     }
     const body = await req.json();
-    const { slots, offlineDuration, onlinePrice, offlinePrice } =
+    const { slots, offlineDuration, onlinePrice, offlinePrice, name } =
       TypeReqAcceptRequest.parse(body);
+    console.log({ slots, offlineDuration, onlinePrice, offlinePrice, name });
     const Provider = await editProvider(
       session?.provider.id,
       offlineDuration,
       slots,
       onlinePrice,
-      offlinePrice
+      offlinePrice,
+      name
     );
 
     return NextResponse.json(

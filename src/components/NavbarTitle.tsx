@@ -127,7 +127,7 @@ const NavbarTitle = () => {
                       }}
                     >
                       {" "}
-                      Edit Profile{" "}
+                      Profile{" "}
                     </div>
                   )}
                   <div

@@ -45,17 +45,19 @@ export const SearchBar = () => {
         <SearchIcon className="absolute right-3 top-2.5 w-5 h-5 text-gray-400" />{" "}
       </div>
       {searchResults.services.length > 0 && (
-        <div className="lg:w-full absolute bg-slate-100" ref={navRef}>
-          <ul className="flex-col items-center justify-center">
-            {searchResults?.services?.map((result, index) => (
-              <li
-                key={index}
-                className="text-gray-800 my-2 flex items-center justify-center py-1 cursor-pointer hover:bg-slate-200"
-              >
-                <Link href={`/service/${result?.serviceName}`}>
-                  {result?.serviceName}
-                </Link>
-              </li>
+        <div
+          className="absolute z-40 mt-4 bg-white shadow-md rounded-lg overflow-hidden max-h-60 w-full"
+          ref={navRef}
+        >
+          <ul className="p-4">
+            {searchResults.services.map((result, index) => (
+              <Link key={index} href={`/service/${result.serviceName}`}>
+                <li className="border-b border-gray-200 py-4 hover:bg-gray-100">
+                  <div className="block w-full px-4 py-2 text-sm font-medium text-gray-900">
+                    {result.serviceName}
+                  </div>
+                </li>
+              </Link>
             ))}
           </ul>
         </div>

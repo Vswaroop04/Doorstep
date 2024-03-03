@@ -70,13 +70,14 @@ export function AccountForm({ provider }: { provider: Provider }) {
   async function onSubmit(data: AccountFormValues) {
     try {
       toast.loading(`Updating Profile`);
+      console.log(data);
       const convertedData = {
         ...data,
         offlineDuration: Number(data.offlineDuration) || 0,
         onlinePrice: Number(data.onlinePrice) || 0,
         offlinePrice: Number(data.offlinePrice) || 0,
       };
-
+      console.log(convertedData);
       await editProvider(convertedData);
       toast.success("Profile Updated Succesfully");
     } catch (e) {

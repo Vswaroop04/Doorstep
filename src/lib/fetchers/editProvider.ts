@@ -1,8 +1,10 @@
 export const editProvider = async ({
+  name,
   offlinePrice,
   onlinePrice,
   offlineDuration,
 }: {
+  name?: string;
   offlinePrice?: number;
   onlinePrice?: number;
   offlineDuration?: number;
@@ -12,7 +14,7 @@ export const editProvider = async ({
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ offlinePrice, onlinePrice, offlineDuration }),
+    body: JSON.stringify({ name,offlinePrice, onlinePrice, offlineDuration }),
   });
 
   if (!response.ok) {

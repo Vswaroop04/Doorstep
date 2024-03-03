@@ -33,6 +33,8 @@ export interface Provider {
   email: string;
   lat: number;
   long: number;
+  onlinePrice: number;
+  offlinePrice: number;
   mobile: number;
   offlineDuration: number;
   createdAt: string;
