@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     const { password: removedpwd, ...withoutpwdprovider } = providerUbj;
     const Provider = await insertNewProvider({
       ...withoutpwdprovider,
+      slotsArray: providerUbj.slots,
       password: hashedPassword,
       offlineDuration: 2,
     });

@@ -27,7 +27,7 @@ interface providerResponse {
 }
 
 export interface Provider {
-  slots: any;
+  slots: number[];
   id: string;
   name: string;
   email: string;
@@ -45,5 +45,8 @@ interface providerReq {
   name: string;
   lat: number;
   long: number;
+  slots: number[];
+  offlinePrice: number;
+  onlinePrice: number;
   mobile: number;
 }

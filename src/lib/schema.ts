@@ -63,7 +63,7 @@ export const Providers = pgTable(
     long: customFloat("long").notNull(),
     offlineDuration: customFloat("offlineDuration").notNull(),
     onlinePrice: customFloat("onlinePrice").notNull(),
-    slots: customNumArray("slots").notNull(),
+    slotsArray: customNumArray("slots").notNull(),
     offlinePrice: customFloat("offlinePrice").notNull(),
     serviceName: text("serviceName").notNull(),
     mobile: bigint("mobile", { mode: "number" }),

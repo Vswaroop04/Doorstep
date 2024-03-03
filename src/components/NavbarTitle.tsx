@@ -64,7 +64,7 @@ const NavbarTitle = () => {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </PopoverTrigger>
-            <PopoverContent className="mr-4">
+            <PopoverContent className="mr-4 bg-white">
               <div className="grid gap-4">
                 <div className="space-y-2">
                   {auth.provider ? (
@@ -118,6 +118,18 @@ const NavbarTitle = () => {
                     {" "}
                     Dashboard{" "}
                   </div>
+                  {auth?.provider && (
+                    <div
+                      className=" items-center gap-4 border p-3 cursor-pointer"
+                      onClick={() => {
+                        setPopoverOpen(false);
+                        auth?.provider && router.push("/provider/profile");
+                      }}
+                    >
+                      {" "}
+                      Edit Profile{" "}
+                    </div>
+                  )}
                   <div
                     className="grid grid-cols-3 items-center border p-3 cursor-pointer"
                     onClick={logout}

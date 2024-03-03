@@ -9,7 +9,7 @@ interface Admin {
   email: string;
 }
 
-interface Provider {
+export interface Provider {
   id: string;
   name: string;
   password: string;
@@ -19,7 +19,10 @@ interface Provider {
   offlineDuration: number;
   serviceName: string;
   mobile: number;
+  onlinePrice: number;
+  offlinePrice: number;
   averageRating?: any;
+  slotsArray?: number[];
   createdAt: string;
   updatedAt: string;
   slots?: Slot[];

@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { CalendarCheck2, CalendarIcon, Edit } from "lucide-react";
+import { CalendarCheck2, CalendarIcon, Edit, Edit2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -34,11 +34,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DataTable from "@/components/Provider/DataTable";
+import { EditSlotPopup } from "@/components/Provider/EditSlotsPopup";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [mounted, setMounted] = useState(false);
   const [openPopup, setOpenPopup] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const router = useRouter();
   const { auth } = useAuth();
@@ -50,20 +52,28 @@ const Services = () => {
   const [offlineDuration, setOfflineDuration] = useState<number>(
     auth?.provider?.offlineDuration || 0
   );
+  const [selectedSlots, setSelectedSlots] = useState<number[]>(
+    auth?.provider?.slotsArray ? auth?.provider?.slotsArray : []
+  );
   useEffect(() => {
     if (!date) return;
     const newDate = new Date(date);
     if (!mounted) {
-      newDate.setDate(newDate.getDate() - 1);
+      newDate.setDate(newDate.getDate());
       setMounted(true);
     }
     newDate.setDate(newDate.getDate() + 1);
 
     const nextDayISOString = newDate.toISOString().split("T")[0];
+    console.log(nextDayISOString);
+    const filtered = auth?.provider?.slots
+      ?.filter((slot) => slot.date === nextDayISOString)
+      .sort((a, b) => {
+        const hourA = parseInt(a.slotTime.split(":")[0]);
+        const hourB = parseInt(b.slotTime.split(":")[0]);
+        return hourA - hourB;
+      });
 
-    const filtered = auth?.provider?.slots?.filter(
-      (slot) => slot.date === nextDayISOString
-    );
     const filteredofs = auth?.provider?.offlineSchedules?.filter(
       (slot) => slot.date === nextDayISOString
     );
@@ -116,7 +126,11 @@ const Services = () => {
               <div className="flex items-center justify-between space-y-2">
                 <div>
                   <h2 className="text-3xl font-semibold tracking-tight my-4">
-                    Slots
+                    Slots{" "}
+                    <Edit2Icon
+                      className="inline-block h-6 w-6 text-gray-500 cursor-pointer"
+                      onClick={() => setOpen(true)}
+                    />
                   </h2>
                 </div>
                 <div>
@@ -250,6 +264,13 @@ const Services = () => {
         offlineDuration={offlineDuration}
         setOfflineDuration={setOfflineDuration}
       />
+      {open && (
+        <EditSlotPopup
+          open={open}
+          setOpen={setOpen}
+          selectedSlots={selectedSlots}
+        />
+      )}
     </Suspense>
   );
 };

@@ -41,6 +41,7 @@ import { getAllServices } from "@/lib/fetchers/getAllServices";
 import { useRouter } from "next/navigation";
 import { Label } from "@radix-ui/react-label";
 import { providerFormSchema, userFormSchema } from "./FormSchema";
+import { SlotPopup } from "../Provider/SlotsPopup";
 
 export default function SignUpComponent() {
   const router = useRouter();
@@ -63,6 +64,7 @@ export default function SignUpComponent() {
     providerMutation.mutate({
       lat: location.lat,
       long: location.long,
+      slots: selectedSlots,
       ...values,
     });
     toast.dismiss("loading");
@@ -97,6 +99,9 @@ export default function SignUpComponent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>("user");
   const [isGPSLoading, setIsGPSLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
+
   const [location, setLocation] = useState<{ lat: number; long: number }>({
     lat: 45.501,
     long: 73.567,
@@ -351,25 +356,6 @@ export default function SignUpComponent() {
 
                   <FormField
                     control={ProviderSignupForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="email">Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            id="email"
-                            placeholder="Email"
-                            className="text-slate-900"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={ProviderSignupForm.control}
                     name="mobile"
                     render={({ field }) => (
                       <FormItem>
@@ -411,6 +397,86 @@ export default function SignUpComponent() {
                               ))}
                             </SelectContent>
                           </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={ProviderSignupForm.control}
+                    name="onlinePrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="mobile">
+                          Online Price (in $/Hr)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            id="number"
+                            placeholder="Online Price"
+                            className="text-slate-900"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={ProviderSignupForm.control}
+                    name="offlinePrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="mobile">
+                          Offline Price (in $/Hr)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            id="number"
+                            placeholder="Offline Price"
+                            className="text-slate-900"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={ProviderSignupForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            id="email"
+                            placeholder="Email"
+                            className="text-slate-900"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={ProviderSignupForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="password">Slots</FormLabel>
+                        <FormControl>
+                          <Button
+                            type="button"
+                            className="flex hover:flex-1"
+                            variant={"ghost"}
+                            onClick={() => setOpen(true)}
+                          >
+                            Select Slots
+                          </Button>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -473,6 +539,14 @@ export default function SignUpComponent() {
           </Card>
         </TabsContent>
       </Tabs>
+      {open && (
+        <SlotPopup
+          open={open}
+          setOpen={setOpen}
+          selectedSlots={selectedSlots}
+          setSelectedSlots={setSelectedSlots}
+        />
+      )}
     </MaxWidthWrapper>
   );
 }

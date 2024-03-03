@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const TypeReqAcceptRequest = z.object({
   slots: z.array(z.number()).optional(),
+  name: z.string().optional(),
   offlineDuration: z.number().optional(),
   onlinePrice: z.number().optional(),
   offlinePrice: z.number().optional(),
@@ -30,9 +31,6 @@ export async function POST(req: NextRequest) {
       offlinePrice
     );
 
-    if ("message" in Provider) {
-      return NextResponse.json({ message: Provider.message }, { status: 400 });
-    }
     return NextResponse.json(
       { message: "Provider Edited Succesfully", Provider },
       { status: 200 }
