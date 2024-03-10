@@ -178,11 +178,11 @@ export async function SlotsCard({
                 <TableCell>{meeting?.user?.email}</TableCell>
                 <TableCell>{meeting?.user?.mobile}</TableCell>
                 <TableCell className="text-right">
-                  {meeting.status === ("scheduled" || "Scheduled") ? (
+                  {meeting.status === "Scheduled" ? (
                     <div className="border-green-500 text-green-500 p-1">
                       Scheduled
                     </div>
-                  ) : meeting.status === ("Rejected" || "rejected") ? (
+                  ) : meeting.status === "Rejected" ? (
                     <div className="border-red-500 text-red-500 p-1">
                       Rejected
                     </div>

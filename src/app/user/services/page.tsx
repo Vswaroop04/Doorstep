@@ -54,25 +54,30 @@ const Services = () => {
             </div>
           </div>
         </div>
-
         <h2 className="text-2xl font-normal tracking-tight flex justify-center mx-auto">
           Meetings
         </h2>
-        <div className="grid grid-cols-3 space-x-4 space-y-4 ">
-          {auth?.user?.meetings?.map((ofsc) => (
-            <MeetingCard
-              key={ofsc.id}
-              providerName={ofsc.slot?.provider?.name}
-              serviceName={ofsc.slot?.provider?.serviceName}
-              date={ofsc.slot?.date}
-              providerEmail={ofsc.slot?.provider?.email}
-              providerMobile={ofsc.slot?.provider?.mobile}
-              slotStatus={ofsc.slot?.slotStatus}
-              slotTime={ofsc.slot?.slotTime}
-              slotDuration={ofsc.slot?.slotDuration}
-            />
-          ))}
-        </div>
+        {auth?.user?.meetings && auth?.user?.meetings.length > 0 ? (
+          <div className="grid grid-cols-3 space-x-4 space-y-4 ">
+            {auth?.user?.meetings?.map((ofsc) => (
+              <MeetingCard
+                key={ofsc.id}
+                providerName={ofsc.slot?.provider?.name}
+                serviceName={ofsc.slot?.provider?.serviceName}
+                date={ofsc.slot?.date}
+                providerEmail={ofsc.slot?.provider?.email}
+                providerMobile={ofsc.slot?.provider?.mobile}
+                slotStatus={ofsc.slot?.slotStatus}
+                slotTime={ofsc.slot?.slotTime}
+                slotDuration={ofsc.slot?.slotDuration}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center mx-auto">
+            No Offline Meetings currently{" "}
+          </div>
+        )}{" "}
         <h2 className="text-2xl font-normal tracking-tight  justify-center mx-auto">
           Offline Schedules
         </h2>
@@ -83,7 +88,10 @@ const Services = () => {
               offlineSchedules={auth?.user?.offlineSchedules}
             />
           ) : (
-            <div> No Offline Schedules currently </div>
+            <div className="flex justify-center mx-auto">
+              {" "}
+              No Offline Schedules currently{" "}
+            </div>
           )}
         </div>
       </div>

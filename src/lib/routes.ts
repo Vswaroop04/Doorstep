@@ -128,6 +128,10 @@ export const approveMeetingWithCustomer = async (
     .where(eq(Meetings.id, meetingId))
     .returning();
 
+  await db.insert(OfflineSchedules).values({
+    providerId: slot?.providerId || "",
+    userId: meetings[0].userId || "",
+  });
   const meetingsWithUserDetails = await db.query.Meetings.findFirst({
     where: (meeting) => eq(meeting.id, meetingId),
     with: {
@@ -210,8 +214,24 @@ export const rejectMeetingWithCustomer = async (
 export const scheduleOfflineMeetingWithProvider = async (
   OfflineSchedule: TypeOfflineSchedules
 ) => {
-  return await db.insert(OfflineSchedules).values(OfflineSchedule).returning();
+  return await db
+    .insert(OfflineSchedules)
+    .values(OfflineSchedule)
+    .onConflictDoUpdate({
+      target: OfflineSchedules.id,
+      set: OfflineSchedule,
+    });
 };
+export const updateStatusOfflineSchedule = async (
+  id: string,
+  status: string
+) => {
+  return await db
+    .update(OfflineSchedules)
+    .set({ status: status })
+    .where(eq(OfflineSchedules.id, id));
+};
+export const getOfflineMeetingUsers = async (providerId: string) => {};
 
 export const editProvider = async (
   providerId: string,

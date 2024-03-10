@@ -74,6 +74,7 @@ export interface OfflineSchedule {
   date: string;
   offlineSlotTime: string;
   offlineSlotDuration: number;
+  status: string;
   priority: number;
   createdAt: string;
   updatedAt: string;

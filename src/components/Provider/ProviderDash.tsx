@@ -227,7 +227,7 @@ const ProviderDash = ({ providerId }: { providerId: string }) => {
                             }}
                             disabled={
                               currentTime > slot.slotTime ||
-                              slot.status == "scheduled"
+                              slot.status == "Scheduled"
                             }
                           >
                             {slot.slotTime}

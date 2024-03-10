@@ -153,9 +153,10 @@ export const OfflineSchedules = pgTable(
     providerId: uuid("provider_id")
       .references(() => Providers.id, { onDelete: "cascade" })
       .notNull(),
-    date: text("date").notNull(),
-    offlineSlotTime: text("slotTime").notNull(),
-    offlineSlotDuration: customFloat("slotDuration").notNull(),
+    date: text("date"),
+    offlineSlotTime: text("slotTime"),
+    offlineSlotDuration: customFloat("slotDuration"),
+    status: text("status"),
     priority: integer("priority"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),

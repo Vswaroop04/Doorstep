@@ -56,13 +56,14 @@ const Cell = ({ row }: { row: any }) => {
   const [open, setOpen] = React.useState(false);
   const [slot, setSlot] = React.useState(false);
 
-  const todayDate = new Date().toISOString().split("T")[0];
+  const prevDate = new Date();
+  prevDate.setDate(prevDate.getDate());
   const currentTime = new Date().toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   });
-
+  const todayDate = prevDate.toISOString().split("T")[0];
   return (
     <>
       <Dialog>
@@ -79,21 +80,30 @@ const Cell = ({ row }: { row: any }) => {
           <div className="grid grid-cols-4 gap-6">
             {Provider.slots
               .filter((slot: any) => slot.date === todayDate)
-              .sort((a: any, b: any) => a.slotTime.localeCompare(b.slotTime))
+              .sort((a: any, b: any) => {
+                const hourA = parseInt(a.slotTime.split(":")[0]);
+                const hourB = parseInt(b.slotTime.split(":")[0]);
+                return hourA - hourB;
+              })
               .map((slot: any) => (
                 <>
                   <Button
                     variant={"default"}
                     key={slot.id}
                     className={`border p-1 outline ${
-                      currentTime > slot.slotTime ? "bg-red-50" : "bg-blue-100"
+                      parseInt(currentTime.slice(0, 2)) >
+                      parseInt(slot.slotTime.slice(0, 2))
+                        ? "bg-red-50"
+                        : "bg-blue-100"
                     }`}
                     onClick={() => {
                       setSlot(slot);
                       setOpen(true);
                     }}
                     disabled={
-                      currentTime > slot.slotTime || slot.status == "scheduled"
+                      parseInt(currentTime.slice(0, 2)) >
+                        parseInt(slot.slotTime.slice(0, 2)) ||
+                      slot.status === "scheduled"
                     }
                   >
                     {slot.slotTime}

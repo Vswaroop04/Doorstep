@@ -1,5 +1,5 @@
-export const scheduleOfflineMeeting = async (Req: any) => {
-  const response = await fetch("/api/provider/scheduleOfflineMeeting", {
+export const updateOfscStatus = async (Req: any) => {
+  const response = await fetch("/api/provider/updateStatusOfflineMeeting", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

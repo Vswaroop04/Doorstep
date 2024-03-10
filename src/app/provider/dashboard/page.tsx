@@ -10,47 +10,22 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { CalendarCheck2, CalendarIcon, Edit, Edit2Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CalendarIcon, Edit2Icon } from "lucide-react";
 import {
   Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import { EditOffDuration } from "@/components/Provider/DialogEditOffDur";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import DataTable from "@/components/Provider/DataTable";
 import { EditSlotPopup } from "@/components/Provider/EditSlotsPopup";
+import OfflineSlots from "@/components/Provider/OfflineSlots";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [mounted, setMounted] = useState(false);
-  const [openPopup, setOpenPopup] = useState(false);
   const [open, setOpen] = useState(false);
-
   const router = useRouter();
   const { auth } = useAuth();
   const [filteredSlots, setFilteredSlots] = useState(auth?.provider?.slots);
   const [filteredOfsc, setfilteredOfsc] = useState(
     auth?.provider?.offlineSchedules
-  );
-
-  const [offlineDuration, setOfflineDuration] = useState<number>(
-    auth?.provider?.offlineDuration || 0
   );
   const [selectedSlots, setSelectedSlots] = useState<number[]>(
     auth?.provider?.slotsArray ? auth?.provider?.slotsArray : []
@@ -62,7 +37,7 @@ const Services = () => {
       newDate.setDate(newDate.getDate());
       setMounted(true);
     }
-    newDate.setDate(newDate.getDate() + 1);
+    newDate.setDate(newDate.getDate());
 
     const nextDayISOString = newDate.toISOString().split("T")[0];
     console.log(nextDayISOString);
@@ -74,10 +49,6 @@ const Services = () => {
         return hourA - hourB;
       });
 
-    const filteredofs = auth?.provider?.offlineSchedules?.filter(
-      (slot) => slot.date === nextDayISOString
-    );
-    setfilteredOfsc(filteredofs);
     setFilteredSlots(filtered || []);
   }, [date, auth?.provider?.slots]);
 
@@ -92,7 +63,7 @@ const Services = () => {
   if (!auth?.provider) {
     toast.message("Please Login As Provider");
     setTimeout(() => {
-      router.push("/sign-in?as=provider");
+      router.push("/sign-in");
     }, 1000);
     return (
       <div className="relative">
@@ -164,106 +135,12 @@ const Services = () => {
               </div>
             </div>
           </Popover>
-          <div className="p-6 pt-0">
-            <div className="flex items-center justify-between space-y-2">
-              <div>
-                <h2 className="text-3xl font-semibold tracking-tight my-4 text-gray-800">
-                  Offline Schedules
-                </h2>
-              </div>
-              <div>
-                <SheetTrigger asChild>
-                  <button className="flex flex-col p-1 bg-green-200 hover:bg-green-300 text-green-800 font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2">
-                    <CalendarCheck2 className="h-5 w-5" />
-                    <span className="text-sm font-medium">Schedule</span>
-                    <span className="block text-xs text-green-600">
-                      Offline Meeting
-                    </span>
-                  </button>
-                </SheetTrigger>
-                <SheetContent side={"right"}>
-                  <div className="">
-                    <SheetHeader>
-                      <SheetTitle className="flex justify-center mx-auto text-xl">
-                        <span className="ml-8">Schedule Offline Meeting</span>
-                      </SheetTitle>
-                    </SheetHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="flex justify-between items-center mx-auto">
-                        <h2 className="flex items-center whitespace-nowrap">
-                          <span>Current Offline Duration :</span>
-                          <span className="font-bold">
-                            {offlineDuration} hrs
-                          </span>
-                          <span
-                            className="ml-2 cursor-pointer"
-                            onClick={() => {
-                              setOpenPopup(true);
-                            }}
-                          >
-                            <SheetClose asChild>
-                              <Edit />
-                            </SheetClose>
-                          </span>
-                        </h2>
-                      </div>
-                      <div className="">
-                        <DataTable
-                          slots={filteredSlots || []}
-                          offlineSchedules={auth?.provider?.offlineSchedules}
-                          offlineDuration={offlineDuration}
-                        />
-                      </div>
-                    </div>
-                    <SheetFooter>
-                      <SheetClose asChild>
-                        <Button type="submit">Save changes</Button>
-                      </SheetClose>
-                    </SheetFooter>
-                  </div>
-                </SheetContent>
-              </div>
-            </div>
-            <Table className="border my-4">
-              <TableCaption>A list of your offline schedules.</TableCaption>
-              <TableHeader>
-                <TableRow className="bg-slate-300 hover:bg-slate-200">
-                  <TableHead>Offline Slot Date</TableHead>
-                  <TableHead>Offline Slot Time</TableHead>
-                  <TableHead>Offline Slot Duration (Hrs)</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Mobile</TableHead>
-                  <TableHead className="text-center">Priority</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOfsc?.map((meeting) => (
-                  <TableRow key={meeting.id}>
-                    <TableCell>{meeting?.date}</TableCell>
-                    <TableCell>{meeting?.offlineSlotTime}</TableCell>
-
-                    <TableCell>{meeting?.offlineSlotDuration}</TableCell>
-
-                    <TableCell className="font-medium">
-                      {meeting?.user?.name}
-                    </TableCell>
-                    <TableCell>{meeting?.user?.email}</TableCell>
-                    <TableCell>{meeting?.user?.mobile}</TableCell>
-                    <TableCell> {meeting?.priority}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <OfflineSlots
+            offlineDur={auth?.provider?.offlineDuration || 2}
+            filteredOfsc={filteredOfsc}
+          />
         </div>
       </Sheet>
-      <EditOffDuration
-        open={openPopup}
-        setOpen={setOpenPopup}
-        offlineDuration={offlineDuration}
-        setOfflineDuration={setOfflineDuration}
-      />
       {open && (
         <EditSlotPopup
           open={open}
