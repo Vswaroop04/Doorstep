@@ -46,7 +46,7 @@ export default function ShortestCircularPath({
     useState<google.maps.DirectionsResult | null>(null);
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GEOCODE_API_KEY || "",
     libraries,
   });
 
@@ -86,10 +86,18 @@ export default function ShortestCircularPath({
   };
 
   useEffect(() => {
-    if (isLoaded) {
-      calculateDirections();
+    console.log("useEffect called. isLoaded:", isLoaded, "users:", users);
+    if (isLoaded && users?.length > 1) {
+      const hasLocationChange = users.some((user, index) => {
+        const prevUser = filteredOfsc?.[index]?.user;
+        return prevUser?.lat !== user.lat || prevUser?.long !== user.long;
+      });
+
+      if (hasLocationChange) {
+        calculateDirections();
+      }
     }
-  }, [isLoaded]);
+  }, [isLoaded, users]);
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading maps...</div>;
