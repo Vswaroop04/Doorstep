@@ -47,7 +47,6 @@ export default function OfflineSlots({
   offlineDur: number;
   filteredOfsc?: OfflineSchedule[];
 }) {
-  console.log(filteredOfsc);
   const [offlineDuration, setOfflineDuration] = useState<number>(offlineDur);
   const [openPopup, setOpenPopup] = useState(false);
   const [ofsc, setOfsc] = useState(filteredOfsc);

@@ -11,11 +11,10 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { CalendarIcon, Edit2Icon } from "lucide-react";
-import {
-  Sheet,
-} from "@/components/ui/sheet";
+import { Sheet } from "@/components/ui/sheet";
 import { EditSlotPopup } from "@/components/Provider/EditSlotsPopup";
 import OfflineSlots from "@/components/Provider/OfflineSlots";
+import ShortestCircularPath from "@/components/Provider/ShortestCircularPath";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -25,6 +24,9 @@ const Services = () => {
   const { auth } = useAuth();
   const [filteredSlots, setFilteredSlots] = useState(auth?.provider?.slots);
   const [filteredOfsc, setfilteredOfsc] = useState(
+    auth?.provider?.offlineSchedules
+  );
+  const [filteredOfscForSp, setfilteredOfscForSp] = useState(
     auth?.provider?.offlineSchedules
   );
   const [selectedSlots, setSelectedSlots] = useState<number[]>(
@@ -48,6 +50,11 @@ const Services = () => {
         const hourB = parseInt(b.slotTime.split(":")[0]);
         return hourA - hourB;
       });
+
+    const filteredofs = auth?.provider?.offlineSchedules?.filter(
+      (slot) => slot.date === nextDayISOString
+    );
+    setfilteredOfscForSp(filteredofs);
 
     setFilteredSlots(filtered || []);
   }, [date, auth?.provider?.slots]);
@@ -139,6 +146,12 @@ const Services = () => {
             offlineDur={auth?.provider?.offlineDuration || 2}
             filteredOfsc={filteredOfsc}
           />
+          <ShortestCircularPath
+            filteredOfsc={filteredOfscForSp}
+            lat={auth?.provider?.lat}
+            long={auth?.provider?.long}
+          />
+          
         </div>
       </Sheet>
       {open && (

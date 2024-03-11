@@ -128,10 +128,26 @@ export const approveMeetingWithCustomer = async (
     .where(eq(Meetings.id, meetingId))
     .returning();
 
-  await db.insert(OfflineSchedules).values({
-    providerId: slot?.providerId || "",
-    userId: meetings[0].userId || "",
-  });
+  const existingSchedule = await db
+    .select()
+    .from(OfflineSchedules)
+    .where(
+      and(
+        eq(OfflineSchedules.providerId, slot?.providerId || ""),
+        eq(OfflineSchedules.userId, meetings[0].userId || "")
+      )
+    )
+    .execute();
+
+  if (existingSchedule.length === 0) {
+    await db
+      .insert(OfflineSchedules)
+      .values({
+        providerId: slot?.providerId || "",
+        userId: meetings[0].userId || "",
+      })
+      .execute();
+  }
   const meetingsWithUserDetails = await db.query.Meetings.findFirst({
     where: (meeting) => eq(meeting.id, meetingId),
     with: {
