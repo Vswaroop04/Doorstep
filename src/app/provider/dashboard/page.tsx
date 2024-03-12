@@ -146,12 +146,7 @@ const Services = () => {
             offlineDur={auth?.provider?.offlineDuration || 2}
             filteredOfsc={filteredOfsc}
           />
-          <ShortestCircularPath
-            filteredOfsc={filteredOfscForSp}
-            lat={auth?.provider?.lat}
-            long={auth?.provider?.long}
-          />
-          
+          <ShortestCircularPath filteredOfsc={filteredOfsc} lat={auth?.provider?.lat} long = {auth?.provider?.long} />
         </div>
       </Sheet>
       {open && (

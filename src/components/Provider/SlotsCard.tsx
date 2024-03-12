@@ -59,7 +59,7 @@ export async function SlotsCard({
       setUMeetings((prevMeetings: any) =>
         prevMeetings.map((meeting: any) =>
           meeting.id === meetingId
-            ? { ...meeting, status: "scheduled" }
+            ? { ...meeting, status: "Scheduled" }
             : meeting
         )
       );
@@ -119,7 +119,7 @@ export async function SlotsCard({
         <CardContent className="p-6 max-w-lg">
           <div className="flex items-center space-x-4 justify-between">
             <div>
-              {slotStatus === "scheduled" ? (
+              {slotStatus === "Scheduled" ? (
                 <div className="outline border-red-500 text-red-500 p-1 rounded">
                   Scheduled
                 </div>
