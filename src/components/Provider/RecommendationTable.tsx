@@ -55,7 +55,6 @@ const Cell = ({ row }: { row: any }) => {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [slot, setSlot] = React.useState(false);
-
   const prevDate = new Date();
   prevDate.setDate(prevDate.getDate());
   const currentTime = new Date().toLocaleTimeString([], {
@@ -101,11 +100,12 @@ const Cell = ({ row }: { row: any }) => {
                       setOpen(true);
                     }}
                     disabled={
-                      parseInt(currentTime.slice(0, 2)) >
-                        parseInt(slot.slotTime.slice(0, 2)) ||
-                      slot.status === "scheduled"
+                     ( parseInt(currentTime.slice(0, 2)) >
+                        parseInt(slot.slotTime.slice(0, 2))) ||
+                      slot.slotStatus === "Scheduled"
                     }
                   >
+                    
                     {slot.slotTime}
                   </Button>
                 </>
