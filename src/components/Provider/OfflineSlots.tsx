@@ -48,6 +48,8 @@ export default function OfflineSlots({
   filteredOfsc?: OfflineSchedule[];
 }) {
   const [offlineDuration, setOfflineDuration] = useState<number>(offlineDur);
+  const [inputOfflineDuration, setInputOfflineDuration] = useState<number>();
+
   const [openPopup, setOpenPopup] = useState(false);
   const [ofsc, setOfsc] = useState(filteredOfsc);
   useEffect(() => {
@@ -60,6 +62,20 @@ export default function OfflineSlots({
       setOfsc(newOfsc);
     }
   }, []);
+  const handleInputChange = (value: number) => {
+    setInputOfflineDuration((prev: any) => {
+      const newTotal = prev + value;
+      console.log(newTotal);
+      if (newTotal > offlineDuration) {
+        toast.error(
+          "Offline duration cannot exceed the maximum allowed duration."
+        );
+        return prev;
+      }
+      return newTotal;
+    });
+  };
+
   const handleSelect = (scheduleId: string) => {
     console.log("handle select");
     const updatedOfsc = ofsc?.map((schedule) => {
@@ -334,11 +350,15 @@ export default function OfflineSlots({
                                     {/* Priority dropdown */}
                                     <select
                                       defaultValue={schedule.priority}
-                                      onChange={(e) =>
+                                      onChange={(e) => {
+                                        const newValue = parseFloat(
+                                          e.target.value
+                                        );
+                                        handleInputChange(newValue);
                                         updateSchedule(schedule.id, {
-                                          priority: parseInt(e.target.value),
-                                        })
-                                      }
+                                          offlineSlotDuration: newValue,
+                                        });
+                                      }}
                                       className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     >
                                       {priorityOptions.map((priority) => (

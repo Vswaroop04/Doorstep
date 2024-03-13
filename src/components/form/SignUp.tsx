@@ -55,15 +55,19 @@ export default function SignUpComponent() {
   function UserSignUp(values: z.infer<typeof userFormSchema>) {
     toast.info("Creating Account ...", { id: "loading", duration: 500 });
 
-    mutation.mutate({ lat: location.lat, long: location.long, ...values });
+    mutation.mutate({
+      lat: location?.lat || 0,
+      long: location?.long || 0,
+      ...values,
+    });
     toast.dismiss("loading");
   }
   function ProviderSignUp(values: z.infer<typeof providerFormSchema>) {
     toast.info("Creating Account ..", { id: "loading", duration: 500 });
 
     providerMutation.mutate({
-      lat: location.lat,
-      long: location.long,
+      lat: location.lat || 0,
+      long: location.long || 0,
       slots: selectedSlots,
       ...values,
     });
@@ -99,10 +103,12 @@ export default function SignUpComponent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>("user");
   const [isGPSLoading, setIsGPSLoading] = useState(false);
+  const [autoLoc, setAutoLoc] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
 
-  const [location, setLocation] = useState<{ lat: number; long: number }>({
+  const [location, setLocation] = useState<{ lat?: number; long?: number }>({
     lat: 45.501,
     long: 73.567,
   });
@@ -128,6 +134,7 @@ export default function SignUpComponent() {
           console.error("Error retrieving geolocation:", e);
         }
         toast.info("Your location has been updated!");
+        setAutoLoc(true);
         setIsGPSLoading(false);
       });
     } else {
@@ -272,16 +279,13 @@ export default function SignUpComponent() {
                       </FormItem>
                     )}
                   />
-
                   <div className="space-y-1 pt-4">
                     <>
                       {isGPSLoading ? (
                         <Loader className="col-span-1 m-auto flex animate-spin items-center justify-center" />
                       ) : (
                         <>
-                          <Label className="pb-2 font-medium">
-                            Location :{" "}
-                          </Label>
+                          <Label className="pb-2 font-medium">Location :</Label>
 
                           <div className="outline-dotted">
                             <Button
@@ -294,6 +298,45 @@ export default function SignUpComponent() {
                               <span>Detect your location automatically</span>
                             </Button>
                           </div>
+
+                          {!autoLoc && (
+                            <>
+                              <div className="flex items-center">
+                                <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
+                                <span className="px-2">or</span>{" "}
+                                <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
+                              </div>
+                              <div className="pb-2">
+                                <Label className="py-2 font-medium">
+                                  Manual :
+                                </Label>
+                                <div className="flex">
+                                  <Input
+                                    type="number"
+                                    placeholder="Lat"
+                                    className="border-gray-400 border rounded-md px-2 py-1"
+                                    onChange={(e) =>
+                                      setLocation({
+                                        lat: parseFloat(e.target.value),
+                                        long: location?.long,
+                                      })
+                                    }
+                                  />
+                                  <Input
+                                    type="number"
+                                    placeholder="Long"
+                                    className="border-gray-400 border rounded-md px-2 py-1"
+                                    onChange={(e) =>
+                                      setLocation({
+                                        lat: location?.lat,
+                                        long: parseFloat(e.target.value),
+                                      })
+                                    }
+                                  />
+                                </div>
+                              </div>
+                            </>
+                          )}
                         </>
                       )}
                     </>
@@ -508,7 +551,7 @@ export default function SignUpComponent() {
                       {isGPSLoading ? (
                         <Loader className="col-span-1 m-auto flex animate-spin items-center justify-center" />
                       ) : (
-                        <>
+                        <div>
                           <Label className="pb-2 font-medium">
                             Location :{" "}
                           </Label>
@@ -524,7 +567,7 @@ export default function SignUpComponent() {
                               <span>Detect your location automatically</span>
                             </Button>
                           </div>
-                        </>
+                        </div>
                       )}
                     </>
                   </div>

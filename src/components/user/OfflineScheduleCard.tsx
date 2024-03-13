@@ -16,7 +16,7 @@ export function OfflineMeetingCard({
   offlineSchedules,
 }: {
   offlineSchedules?: OfflineSchedule[];
-  }) {
+}) {
   return (
     <div>
       <Card className="">
@@ -34,7 +34,7 @@ export function OfflineMeetingCard({
               providerName={ofsc?.provider?.name || ""}
               providerMobile={ofsc?.provider?.mobile || 0}
               offlinsSlotTime={ofsc.offlineSlotTime}
-              offlineSlotDuration={ofsc.offlineSlotDuration.toString() || ""}
+              offlineSlotDuration={ofsc.offlineSlotDuration || 0}
               date={ofsc.date}
             />
           ))}

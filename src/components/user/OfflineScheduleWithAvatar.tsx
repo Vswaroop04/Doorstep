@@ -28,7 +28,7 @@ export default function OfflineSchedulesUser({
   providerName: string;
   providerMobile: number;
   offlinsSlotTime: string;
-  offlineSlotDuration: string;
+  offlineSlotDuration: number;
   date: string;
 }) {
   const [open, setOpen] = useState(false);
