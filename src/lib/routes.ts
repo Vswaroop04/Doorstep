@@ -112,7 +112,8 @@ export const scheduleMeetingWithProvider = async (
 
 export const approveMeetingWithCustomer = async (
   slotId: string,
-  meetingId: string
+  meetingId: string,
+  price: number
 ) => {
   const slot = await db.query.Slots.findFirst({ where: eq(Slots.id, slotId) });
   if (slot?.slotStatus == "scheduled") {
@@ -127,7 +128,6 @@ export const approveMeetingWithCustomer = async (
     .set({ status: "Scheduled" })
     .where(eq(Meetings.id, meetingId))
     .returning();
-
   const existingSchedule = await db
     .select()
     .from(OfflineSchedules)
@@ -205,6 +205,10 @@ export const approveMeetingWithCustomer = async (
         <p>Please join the call according to your scheduled slot time.</p>
         <p>Slot Time: <strong> ${slot?.slotTime} </strong></p>
         <p>Google Meet Link: <a href="https://meet.google.com/avo-bmmx-evu">https://meet.google.com/avo-bmmx-evu</a></p>
+                <p>Please do payment of ${price} $ Using Below Link.</p>
+
+                <p>Payment Link: <a href="https://doorstep-mu.vercel.app/pay?price=${price}">https://doorstep-mu.vercel.app/pay?price=${price}</a></p>
+
         <p>If you have any questions or need assistance, feel free to contact us at <a href="mailto:contact@doorstep.com">contact@doorstep.com</a>.</p>
         <p>Thanks, Doorstep</p>
     </div>

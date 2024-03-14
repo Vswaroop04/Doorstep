@@ -22,6 +22,8 @@ export default function OfflineSchedulesUser({
   offlinsSlotTime,
   offlineSlotDuration,
   date,
+  status,
+  price,
 }: {
   providerId: string;
   providerEmail: string;
@@ -30,9 +32,11 @@ export default function OfflineSchedulesUser({
   offlinsSlotTime: string;
   offlineSlotDuration: number;
   date: string;
+  status: string;
+  price?: number;
 }) {
   const [open, setOpen] = useState(false);
-  const [feedback, setFeedback] = useState({success : false});
+  const [feedback, setFeedback] = useState({ success: false });
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -131,6 +135,30 @@ export default function OfflineSchedulesUser({
           </span>
         </div>
       </div>
+      {status == "Completed" && (
+        <div className="flex justify-end">
+          <div className="flex justify-end">
+            <button
+              onClick={() => {
+                window.location.href = `/pay?price=${price}`;
+              }}
+              className="bg-green-500 text-white rounded-full py-2 px-4 mr-2 hover:bg-green-600 focus:outline-none focus:bg-green-600"
+            >
+              Pay Now
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => setOpen(true)}
+              className="bg-blue-500 text-white rounded-full py-2 px-4 mr-2 hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+            >
+              Leave Feedback
+            </button>
+          </div>
+        </div>
+      )}
+
       <Feedback
         open={open}
         setOpen={setOpen}

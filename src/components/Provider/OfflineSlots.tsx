@@ -48,79 +48,71 @@ export default function OfflineSlots({
   filteredOfsc?: OfflineSchedule[];
 }) {
   const [offlineDuration, setOfflineDuration] = useState<number>(offlineDur);
-  const [inputOfflineDuration, setInputOfflineDuration] = useState<number>();
-
   const [openPopup, setOpenPopup] = useState(false);
   const [ofsc, setOfsc] = useState(filteredOfsc);
+  const [selectedChanges, setSelectedChanges] = useState<
+    Partial<OfflineSchedule>
+  >({});
+  const [inputOfflineDuration, setInputOfflineDuration] = useState(0);
+
   useEffect(() => {
     if (ofsc) {
       const newOfsc = ofsc.map((schedule, index) => ({
         ...schedule,
         priority: index + 1,
         offlineSlotTime: timeOptions[index % timeOptions.length],
+        offlineSlotDuration: durationOptions[0],
       }));
       setOfsc(newOfsc);
     }
   }, []);
-  const handleInputChange = (value: number) => {
-    setInputOfflineDuration((prev: any) => {
-      const newTotal = prev + value;
-      console.log(newTotal);
-      if (newTotal > offlineDuration) {
-        toast.error(
-          "Offline duration cannot exceed the maximum allowed duration."
-        );
-        return prev;
-      }
-      return newTotal;
-    });
-  };
 
   const handleSelect = (scheduleId: string) => {
-    console.log("handle select");
     const updatedOfsc = ofsc?.map((schedule) => {
       if (schedule.id === scheduleId) {
         if (schedule.status === "Selected") {
-          console.log("null");
+          setSelectedChanges({});
           return { ...schedule, status: null };
         } else {
-          return {
-            ...schedule,
+          const updatedSchedule: Partial<OfflineSchedule> = {
             status: "Selected",
             date: dateOptions[0],
             offlineSlotTime:
               timeOptions[ofsc?.indexOf(schedule) % timeOptions.length],
-            offlineSlotDuration: durationOptions[0],
           };
+          setSelectedChanges(updatedSchedule);
+          return { ...schedule, ...updatedSchedule };
         }
       }
       return schedule;
     }) as OfflineSchedule[] | undefined;
     setOfsc(updatedOfsc);
   };
+
   const updateScheduleStatus = async (id: string, status: string) => {
     try {
       toast.message("Updating Status");
       await updateOfscStatus({ id, status });
-      toast.success("Status Saved Succesfully");
+      toast.success("Status Saved Successfully");
     } catch (e) {
       console.log(e);
-      toast.error("Error Occured");
+      toast.error("Error Occurred");
     }
   };
+
   const saveOfscsInDB = async () => {
     try {
       toast.message("Saving Offline Schedules");
       if (ofsc) {
-        for (const schedules of ofsc) {
-          const { user, createdAt, updatedAt, ...schedule } = schedules;
-          await scheduleOfflineMeeting(schedule);
+        for (const schedule of ofsc) {
+          const { user, createdAt, updatedAt, ...updatedFields } = schedule;
+          await scheduleOfflineMeeting(updatedFields);
         }
       }
-      toast.success("Saved Succesfully");
+      toast.success("Saved Successfully");
     } catch (e) {
       console.log(e);
-      toast.error("Error Occured");
+      toast.error("Error Occurred");
     }
   };
 
@@ -128,6 +120,7 @@ export default function OfflineSlots({
     scheduleId: string,
     updatedFields: Partial<OfflineSchedule>
   ) => {
+    console.log(scheduleId, updatedFields);
     setOfsc((prevOfsc) =>
       prevOfsc?.map((schedule) =>
         schedule.id === scheduleId
@@ -327,20 +320,45 @@ export default function OfflineSlots({
                                       defaultValue={
                                         schedule.offlineSlotDuration
                                       }
-                                      onChange={(e) =>
+                                      onChange={(e) => {
+                                        let OfflineScheduleTime = parseFloat(
+                                          e.target.value
+                                        );
+                                        ofsc.map((ofsc) => {
+                                          if (
+                                            ofsc.id != schedule.id &&
+                                            ofsc.status != "Scheduled" &&
+                                            ofsc.status != "Completed" &&
+                                            ofsc.status != "Cancelled"
+                                          ) {
+                                            console.log(
+                                              ofsc.offlineSlotDuration
+                                            );
+                                            OfflineScheduleTime =
+                                              OfflineScheduleTime +
+                                              ofsc.offlineSlotDuration;
+                                          }
+                                        });
+                                        console.log(OfflineScheduleTime);
+                                        if (
+                                          OfflineScheduleTime > offlineDuration
+                                        ) {
+                                          e.target.value =
+                                            schedule.offlineSlotDuration.toString();
+                                          return toast.error(
+                                            "slots Duration cant be more than the current offline duration"
+                                          );
+                                        }
                                         updateSchedule(schedule.id, {
                                           offlineSlotDuration: parseFloat(
                                             e.target.value
                                           ),
-                                        })
-                                      }
+                                        });
+                                      }}
                                       className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     >
                                       {durationOptions.map((duration) => (
-                                        <option
-                                          key={duration}
-                                          value={durationOptions[1]}
-                                        >
+                                        <option key={duration} value={duration}>
                                           {duration}
                                         </option>
                                       ))}
@@ -350,16 +368,12 @@ export default function OfflineSlots({
                                     {/* Priority dropdown */}
                                     <select
                                       defaultValue={schedule.priority}
-                                      onChange={(e) => {
-                                        const newValue = parseFloat(
-                                          e.target.value
-                                        );
-                                        handleInputChange(newValue);
+                                      onChange={(e) =>
                                         updateSchedule(schedule.id, {
-                                          offlineSlotDuration: newValue,
-                                        });
-                                      }}
-                                      className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                          priority: parseInt(e.target.value),
+                                        })
+                                      }
+                                      className="w-full p-2 border   border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     >
                                       {priorityOptions.map((priority) => (
                                         <option key={priority} value={priority}>
@@ -449,7 +463,7 @@ export default function OfflineSlots({
                             </>
                           )}
                           {meeting.status !== "Selected" && (
-                            <option value="system">Cancelled</option>
+                            <option value="Cancelled">Cancelled</option>
                           )}
                         </select>
                       </TableCell>

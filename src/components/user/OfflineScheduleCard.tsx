@@ -17,6 +17,7 @@ export function OfflineMeetingCard({
 }: {
   offlineSchedules?: OfflineSchedule[];
 }) {
+  console.log(offlineSchedules);
   return (
     <div>
       <Card className="">
@@ -25,7 +26,7 @@ export function OfflineMeetingCard({
             Here is the list of offline schedules
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent>s
           {offlineSchedules?.map((ofsc) => (
             <OfflineSchedulesUser
               key={ofsc.id}
@@ -36,6 +37,8 @@ export function OfflineMeetingCard({
               offlinsSlotTime={ofsc.offlineSlotTime}
               offlineSlotDuration={ofsc.offlineSlotDuration || 0}
               date={ofsc.date}
+              status={ofsc.status}
+              price = {ofsc.provider?.offlinePrice}
             />
           ))}
         </CardContent>

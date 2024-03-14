@@ -59,19 +59,21 @@ const Services = () => {
         </h2>
         {auth?.user?.meetings && auth?.user?.meetings.length > 0 ? (
           <div className="grid grid-cols-3 space-x-4 space-y-4 ">
-            {auth?.user?.meetings?.map((ofsc) => (
-              <MeetingCard
-                key={ofsc.id}
-                providerName={ofsc.slot?.provider?.name}
-                serviceName={ofsc.slot?.provider?.serviceName}
-                date={ofsc.slot?.date}
-                providerEmail={ofsc.slot?.provider?.email}
-                providerMobile={ofsc.slot?.provider?.mobile}
-                slotStatus={ofsc.slot?.slotStatus}
-                slotTime={ofsc.slot?.slotTime}
-                slotDuration={ofsc.slot?.slotDuration}
-              />
-            ))}
+            {auth?.user?.meetings
+              ?.filter((ofsc) => ofsc.status != "Selected")
+              .map((ofsc) => (
+                <MeetingCard
+                  key={ofsc.id}
+                  providerName={ofsc.slot?.provider?.name}
+                  serviceName={ofsc.slot?.provider?.serviceName}
+                  date={ofsc.slot?.date}
+                  providerEmail={ofsc.slot?.provider?.email}
+                  providerMobile={ofsc.slot?.provider?.mobile}
+                  slotStatus={ofsc.slot?.slotStatus}
+                  slotTime={ofsc.slot?.slotTime}
+                  slotDuration={ofsc.slot?.slotDuration}
+                />
+              ))}
           </div>
         ) : (
           <div className="flex justify-center mx-auto">

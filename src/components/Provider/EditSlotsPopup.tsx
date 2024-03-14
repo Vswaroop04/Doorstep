@@ -65,7 +65,7 @@ export function EditSlotPopup({
     return false;
   };
 
-  const slots = generateSlots(8, 20);
+  const slots = generateSlots(1, 23);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px] bg-gray-100">
@@ -77,7 +77,6 @@ export function EditSlotPopup({
         </DialogHeader>
         {warning && (
           <div className="text-red-400">
-            {" "}
             *If this slot has active meetings On Save Will Delete the current
             Meetings Of the Slot{" "}
           </div>

@@ -19,7 +19,10 @@ export async function POST(req: NextRequest) {
     }
     const body = await req.json();
     const { meetingId, slotId } = TypeReqAcceptRequest.parse(body);
-    const approvedMeeting = await approveMeetingWithCustomer(slotId, meetingId);
+    const approvedMeeting = await approveMeetingWithCustomer(
+      slotId,
+      meetingId,
+      session?.provider?.onlinePrice);
 
     if ("message" in approvedMeeting) {
       return NextResponse.json(

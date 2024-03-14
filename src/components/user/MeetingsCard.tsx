@@ -50,42 +50,44 @@ export function MeetingCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-2 py-4">
-        <div className="flex items-center space-x-4">
-          <Avatar className="rounded-lg pt-2">
-            <MailIcon />
-          </Avatar>
-          <div>
-            <p className="text-sm text-gray-500">{providerEmail || "NA"}</p>
+      <CardContent>
+        <div className="grid gap-2 py-4">
+          <div className="flex items-center space-x-4">
+            <Avatar className="rounded-lg pt-2">
+              <MailIcon />
+            </Avatar>
+            <div>
+              <p className="text-sm text-gray-500">{providerEmail || "NA"}</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Avatar className="rounded-lg pt-2">
-            <MobileIcon className="w-6 h-6" />
-          </Avatar>
-          <div>
-            <p className="text-sm text-gray-500">{providerMobile || "NA"}</p>
+          <div className="flex items-center space-x-4">
+            <Avatar className="rounded-lg pt-2">
+              <MobileIcon className="w-6 h-6" />
+            </Avatar>
+            <div>
+              <p className="text-sm text-gray-500">{providerMobile || "NA"}</p>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center space-x-4">
-          <p className="text-sm text-gray-500">Slot Status:</p>
-          <p
-            className={`text-sm ${
-              slotStatus === "Booked"
-                ? "text-green-600 font-semibold"
-                : "text-red-600 font-semibold"
-            }`}
-          >
-            {slotStatus}
-          </p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <p className="text-sm text-gray-500">Slot Time:</p>
-          <p className="text-sm">{slotTime}</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <p className="text-sm text-gray-500">Slot Duration:</p>
-          <p className="text-sm">{slotDuration} Hr(s)</p>
+          <div className="flex items-center space-x-4">
+            <p className="text-sm text-gray-500">Slot Status:</p>
+            <p
+              className={`text-sm ${
+                slotStatus === "Booked"
+                  ? "text-green-600 font-semibold"
+                  : "text-red-600 font-semibold"
+              }`}
+            >
+              {slotStatus}
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <p className="text-sm text-gray-500">Slot Time:</p>
+            <p className="text-sm">{slotTime}</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <p className="text-sm text-gray-500">Slot Duration:</p>
+            <p className="text-sm">{slotDuration} Hr(s)</p>
+          </div>
         </div>
       </CardContent>
     </Card>
