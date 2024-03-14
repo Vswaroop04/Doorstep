@@ -208,16 +208,19 @@ const ProviderDash = ({ providerId }: { providerId: string }) => {
                   <div className="grid grid-cols-4 gap-6">
                     {provider?.slots
                       .filter((slot: any) => slot.date === todayDate)
-                      .sort((a: any, b: any) =>
-                        a.slotTime.localeCompare(b.slotTime)
-                      )
+                      .sort((a: any, b: any) => {
+                        const hourA = parseInt(a.slotTime.split(":")[0]);
+                        const hourB = parseInt(b.slotTime.split(":")[0]);
+                        return hourA - hourB;
+                      })
                       .map((slot: any) => (
                         <>
                           <Button
                             variant={"default"}
                             key={slot.id}
                             className={`border p-1 outline ${
-                              currentTime > slot.slotTime
+                              parseInt(currentTime.slice(0, 2)) >
+                              parseInt(slot.slotTime.slice(0, 2))
                                 ? "bg-red-50"
                                 : "bg-blue-100"
                             }`}
@@ -226,8 +229,9 @@ const ProviderDash = ({ providerId }: { providerId: string }) => {
                               setOpen(true);
                             }}
                             disabled={
-                              currentTime > slot.slotTime ||
-                              slot.slotStatus == "Scheduled"
+                              parseInt(currentTime.slice(0, 2)) >
+                                parseInt(slot.slotTime.slice(0, 2)) ||
+                              slot.slotStatus === "Scheduled"
                             }
                           >
                             {slot.slotTime}
