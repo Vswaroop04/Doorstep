@@ -8,6 +8,7 @@ import {
   Services,
   Slots,
   Ratings,
+  OnlineMeetingReq,
 } from "./schema";
 import { db } from "@/lib/db";
 import { format } from "date-fns";
@@ -128,20 +129,40 @@ export const approveMeetingWithCustomer = async (
     .set({ status: "Scheduled" })
     .where(eq(Meetings.id, meetingId))
     .returning();
+  // const existingSchedule = await db
+  //   .select()
+  //   .from(OfflineSchedules)
+  //   .where(
+  //     and(
+  //       eq(OfflineSchedules.providerId, slot?.providerId || ""),
+  //       eq(OfflineSchedules.userId, meetings[0].userId || "")
+  //     )
+  //   )
+  //   .execute();
+
+  // if (existingSchedule.length === 0) {
+  //   await db
+  //     .insert(OfflineSchedules)
+  //     .values({
+  //       providerId: slot?.providerId || "",
+  //       userId: meetings[0].userId || "",
+  //     })
+  //     .execute();
+  // }
   const existingSchedule = await db
     .select()
-    .from(OfflineSchedules)
+    .from(OnlineMeetingReq)
     .where(
       and(
-        eq(OfflineSchedules.providerId, slot?.providerId || ""),
-        eq(OfflineSchedules.userId, meetings[0].userId || "")
+        eq(OnlineMeetingReq.providerId, slot?.providerId || ""),
+        eq(OnlineMeetingReq.userId, meetings[0].userId || "")
       )
     )
     .execute();
 
   if (existingSchedule.length === 0) {
     await db
-      .insert(OfflineSchedules)
+      .insert(OnlineMeetingReq)
       .values({
         providerId: slot?.providerId || "",
         userId: meetings[0].userId || "",
@@ -220,6 +241,45 @@ export const approveMeetingWithCustomer = async (
   return meetings;
 };
 
+export const offlineMeetingReqToUser = async (
+  providerId: string,
+  userId: string
+) => {
+  const existingSchedule = await db
+    .select()
+    .from(OnlineMeetingReq)
+    .where(
+      and(
+        eq(OnlineMeetingReq.providerId, providerId || ""),
+        eq(OnlineMeetingReq.userId, userId || "")
+      )
+    )
+    .execute();
+
+  if (existingSchedule.length === 0) {
+    await db
+      .insert(OnlineMeetingReq)
+      .values({
+        providerId: providerId || "",
+        userId: userId || "",
+        status: "requested",
+      })
+      .execute();
+  } else {
+    await db
+      .update(OnlineMeetingReq)
+      .set({ status: "requested" })
+      .where(
+        and(
+          eq(OnlineMeetingReq.providerId, providerId || ""),
+          eq(OnlineMeetingReq.userId, userId || "")
+        )
+      )
+      .execute();
+  }
+  return { message: "Offline Meeting Req Sent Succesfully" };
+};
+
 export const rejectMeetingWithCustomer = async (
   meetingId: string,
   slotId: string
@@ -251,6 +311,36 @@ export const updateStatusOfflineSchedule = async (
     .set({ status: status })
     .where(eq(OfflineSchedules.id, id));
 };
+export const approveOfflineReq = async (id: string, status: string) => {
+  const meeting = await db
+    .update(OnlineMeetingReq)
+    .set({ status: status })
+    .where(eq(OnlineMeetingReq.id, id))
+    .returning();
+
+  const existingSchedule = await db
+    .select()
+    .from(OfflineSchedules)
+    .where(
+      and(
+        eq(OfflineSchedules.providerId, meeting[0]?.providerId || ""),
+        eq(OfflineSchedules.userId, meeting[0].userId || "")
+      )
+    )
+    .execute();
+
+  if (existingSchedule.length === 0) {
+    await db
+      .insert(OfflineSchedules)
+      .values({
+        providerId: meeting[0].providerId || "",
+        userId: meeting[0].userId || "",
+      })
+      .execute();
+  }
+  return { message: `${status} Updated Succesfully` };
+};
+
 export const getOfflineMeetingUsers = async (providerId: string) => {};
 
 export const editProvider = async (
@@ -388,6 +478,15 @@ export async function getProvider(email: string, hashedPassword: string) {
           },
         },
       },
+      OnlineMeetingReq: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
       ratings: {
         with: {
           user: {
@@ -420,6 +519,15 @@ export async function getUser(email: string, hashedPassword: string) {
   const usersWithRelations = await db.query.Users.findFirst({
     where: and(eq(Users.email, email)),
     with: {
+      OnlineMeetingReq: {
+        with: {
+          provider: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
       offlineSchedules: {
         with: {
           provider: {
@@ -484,6 +592,15 @@ export async function getProviderById(id: string) {
           },
         },
       },
+      OnlineMeetingReq: {
+        with: {
+          user: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
       ratings: {
         with: {
           user: {
@@ -509,6 +626,15 @@ export async function getUserById(id: string) {
   const usersWithRelations = await db.query.Users.findFirst({
     where: and(eq(Users.id, id)),
     with: {
+      OnlineMeetingReq: {
+        with: {
+          provider: {
+            columns: {
+              password: false,
+            },
+          },
+        },
+      },
       offlineSchedules: {
         with: {
           provider: {

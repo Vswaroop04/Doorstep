@@ -40,6 +40,10 @@ export const Users = pgTable(
     long: customFloat("long").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
+    cardDetails: text("cardDetails"),
+    expiryDate: text("expiryDate"),
+    cvc: text("cvc"),
+    nameOnCard: text("nameOnCard"),
   },
   (users) => {
     return {
@@ -104,11 +108,13 @@ export const Slots = pgTable(
 export const providersRelations = relations(Providers, ({ many }) => ({
   slots: many(Slots),
   offlineSchedules: many(OfflineSchedules),
+  OnlineMeetingReq: many(OnlineMeetingReq),
   ratings: many(Ratings),
 }));
 
 export const usersRelations = relations(Users, ({ many }) => ({
   offlineSchedules: many(OfflineSchedules),
+  OnlineMeetingReq: many(OnlineMeetingReq),
   meetings: many(Meetings),
 }));
 
@@ -173,6 +179,48 @@ export const OfflineSchedules = pgTable(
   })
 );
 
+export const OnlineMeetingReq = pgTable(
+  "online_meeting_reqs",
+  {
+    id: uuid("id").primaryKey().defaultRandom().notNull(),
+    userId: uuid("user_id")
+      .references(() => Users.id, { onDelete: "cascade" })
+      .notNull(),
+    providerId: uuid("provider_id")
+      .references(() => Providers.id, { onDelete: "cascade" })
+      .notNull(),
+    date: text("date"),
+    offlineSlotTime: text("slotTime"),
+    offlineSlotDuration: customFloat("slotDuration"),
+    status: text("status"),
+    priority: integer("priority"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (offlineschedules) => ({
+    offlineschedulesUniqueConstraint: uniqueIndex(
+      "onlinemeeting_unique_constraint"
+    ).on(
+      offlineschedules.providerId,
+      offlineschedules.userId,
+      offlineschedules.date,
+      offlineschedules.offlineSlotTime
+    ),
+  })
+);
+export const onlineMeetingReqsRelations = relations(
+  OnlineMeetingReq,
+  ({ one }) => ({
+    user: one(Users, {
+      fields: [OnlineMeetingReq.userId],
+      references: [Users.id],
+    }),
+    provider: one(Providers, {
+      fields: [OnlineMeetingReq.providerId],
+      references: [Providers.id],
+    }),
+  })
+);
 export const Ratings = pgTable("ratings", {
   id: uuid("id").primaryKey().defaultRandom().notNull(),
   userId: uuid("user_id")

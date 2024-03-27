@@ -15,11 +15,14 @@ import { Sheet } from "@/components/ui/sheet";
 import { EditSlotPopup } from "@/components/Provider/EditSlotsPopup";
 import OfflineSlots from "@/components/Provider/OfflineSlots";
 import ShortestCircularPath from "@/components/Provider/ShortestCircularPath";
+import { OfflineMeetingPopup } from "@/components/Provider/offlineMeetingReqsPopup";
 
 const Services = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
+    const [openOfflineMeetingReq, setopenOfflineMeetingReq] = useState(false);
+
   const router = useRouter();
   const { auth } = useAuth();
   const [filteredSlots, setFilteredSlots] = useState(auth?.provider?.slots);
@@ -142,11 +145,21 @@ const Services = () => {
               </div>
             </div>
           </Popover>
+          <button className="flex flex-col p-1 hover:bg-custom bg-slate-200  font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2" onClick={() => setopenOfflineMeetingReq(true)}>
+            <span className="text-xl font-medium">Offline</span>
+            <span className="block text-xs text-slate-600">
+              Meeting Requests
+            </span>
+          </button>
           <OfflineSlots
             offlineDur={auth?.provider?.offlineDuration || 2}
             filteredOfsc={filteredOfsc}
           />
-          <ShortestCircularPath filteredOfsc={filteredOfsc} lat={auth?.provider?.lat} long = {auth?.provider?.long} />
+          <ShortestCircularPath
+            filteredOfsc={filteredOfsc}
+            lat={auth?.provider?.lat}
+            long={auth?.provider?.long}
+          />
         </div>
       </Sheet>
       {open && (
@@ -156,6 +169,7 @@ const Services = () => {
           selectedSlots={selectedSlots}
         />
       )}
+      {openOfflineMeetingReq && <OfflineMeetingPopup open={openOfflineMeetingReq} setOpen={setopenOfflineMeetingReq} meetings={auth?.provider?.OnlineMeetingReq} />}
     </Suspense>
   );
 };

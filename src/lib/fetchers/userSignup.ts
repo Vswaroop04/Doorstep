@@ -41,4 +41,9 @@ interface userReq {
   lat: number;
   long: number;
   mobile: number;
+  cardDetails?: string;
+  cvc?: string;
+  expiryDate?: string;
+  nameOnCard?: string;
+  
 }

@@ -27,6 +27,7 @@ export interface Provider {
   updatedAt: string;
   slots?: Slot[];
   offlineSchedules?: OfflineSchedule[];
+  OnlineMeetingReq?: OfflineSchedule[];
   ratings?: Rating[];
 }
 export interface User {
@@ -38,6 +39,7 @@ export interface User {
   long?: number;
   mobile: number;
   createdAt: string;
+  OnlineMeetingReq?: OfflineSchedule[];
   offlineSchedules?: OfflineSchedule[];
   meetings?: Meeting[];
 }

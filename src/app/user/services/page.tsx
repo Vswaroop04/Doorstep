@@ -1,6 +1,6 @@
 "use client";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
@@ -8,11 +8,13 @@ import { toast } from "sonner";
 import { OfflineMeetingCard } from "@/components/user/OfflineScheduleCard";
 import { MeetingCard } from "@/components/user/MeetingsCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { OfflineMeetingPopupUser } from "@/components/user/onlineMeetingPopup";
 
 const Services = () => {
   const router = useRouter();
+  const [openOfflineMeetingReq, setopenOfflineMeetingReq] = useState(false);
   const { auth } = useAuth();
-  console.log(auth);
+
   if (!auth?.user) {
     toast.message("Please Login As User");
     setTimeout(() => {
@@ -54,6 +56,13 @@ const Services = () => {
             </div>
           </div>
         </div>
+        <button
+          className="flex flex-col p-1 hover:bg-custom bg-slate-200  font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2"
+          onClick={() => setopenOfflineMeetingReq(true)}
+        >
+          <span className="text-xl font-medium">Offline</span>
+          <span className="block text-xs text-slate-600">Meeting Requests</span>
+        </button>
         <h2 className="text-2xl font-normal tracking-tight flex justify-center mx-auto">
           Meetings
         </h2>
@@ -97,6 +106,13 @@ const Services = () => {
           )}
         </div>
       </div>
+      {openOfflineMeetingReq && (
+        <OfflineMeetingPopupUser
+          open={openOfflineMeetingReq}
+          setOpen={setopenOfflineMeetingReq}
+          meetings={auth?.user?.OnlineMeetingReq}
+        />
+      )}
     </Suspense>
   );
 };

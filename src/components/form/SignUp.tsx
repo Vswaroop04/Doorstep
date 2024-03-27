@@ -18,7 +18,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader, LocateFixed, LocateFixedIcon, LocateIcon } from "lucide-react";
+import {
+  Loader,
+  LocateFixed,
+  LocateFixedIcon,
+  LocateIcon,
+  PlusCircleIcon,
+  PlusIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, MouseEvent } from "react";
@@ -42,6 +49,7 @@ import { useRouter } from "next/navigation";
 import { Label } from "@radix-ui/react-label";
 import { providerFormSchema, userFormSchema } from "./FormSchema";
 import { SlotPopup } from "../Provider/SlotsPopup";
+import { CardDetailsPopup } from "../user/CardDetailsPopup";
 
 export default function SignUpComponent() {
   const router = useRouter();
@@ -58,6 +66,7 @@ export default function SignUpComponent() {
     mutation.mutate({
       lat: location?.lat || 0,
       long: location?.long || 0,
+      ...cardDetails,
       ...values,
     });
     toast.dismiss("loading");
@@ -107,11 +116,17 @@ export default function SignUpComponent() {
 
   const [open, setOpen] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<number[]>([]);
-
+  const [cardDetailsPopup, setCardDetailsPopup] = useState<boolean>(false);
   const [location, setLocation] = useState<{ lat?: number; long?: number }>({
     lat: 45.501,
     long: 73.567,
   });
+  const [cardDetails, setcardDetails] = useState<{
+    cardDetails?: string;
+    expiryDate?: string;
+    cvc?: string;
+    nameOnCard?: string;
+  }>({});
 
   const search = searchParams.get("as");
   useEffect(() => {
@@ -279,6 +294,21 @@ export default function SignUpComponent() {
                       </FormItem>
                     )}
                   />
+                  <div>
+                    <Label className="pb-2 font-medium">Card Details :</Label>
+
+                    <div className="mt-2 outline">
+                      <Button
+                        className="flex gap-2 border-brand-verified text-brand-verified hover:text-brand-verified items-center mx-auto justify-center"
+                        variant={"secondary"}
+                        onClick={() => setCardDetailsPopup(true)}
+                        type="button"
+                      >
+                        <PlusCircleIcon />
+                        <span>Add Card Details</span>
+                      </Button>
+                    </div>
+                  </div>
                   <div className="space-y-1 pt-4">
                     <>
                       {isGPSLoading ? (
@@ -299,44 +329,44 @@ export default function SignUpComponent() {
                             </Button>
                           </div>
 
-                          {!autoLoc && (
-                            <>
-                              <div className="flex items-center">
-                                <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
-                                <span className="px-2">or</span>{" "}
-                                <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
+                          <>
+                            <div className="flex items-center">
+                              <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
+                              <span className="px-2">or</span>{" "}
+                              <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
+                            </div>
+                            <div className="pb-2">
+                              <Label className="py-2 font-medium">
+                                Manual :
+                              </Label>
+                              <div className="flex">
+                                <Input
+                                  type="number"
+                                  placeholder="Lat"
+                                  className="border-gray-400 border rounded-md px-2 py-1"
+                                  value={location.lat}
+                                  onChange={(e) =>
+                                    setLocation({
+                                      lat: parseFloat(e.target.value),
+                                      long: location?.long,
+                                    })
+                                  }
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Long"
+                                  className="border-gray-400 border rounded-md px-2 py-1"
+                                  value={location.long}
+                                  onChange={(e) =>
+                                    setLocation({
+                                      lat: location?.lat,
+                                      long: parseFloat(e.target.value),
+                                    })
+                                  }
+                                />
                               </div>
-                              <div className="pb-2">
-                                <Label className="py-2 font-medium">
-                                  Manual :
-                                </Label>
-                                <div className="flex">
-                                  <Input
-                                    type="number"
-                                    placeholder="Lat"
-                                    className="border-gray-400 border rounded-md px-2 py-1"
-                                    onChange={(e) =>
-                                      setLocation({
-                                        lat: parseFloat(e.target.value),
-                                        long: location?.long,
-                                      })
-                                    }
-                                  />
-                                  <Input
-                                    type="number"
-                                    placeholder="Long"
-                                    className="border-gray-400 border rounded-md px-2 py-1"
-                                    onChange={(e) =>
-                                      setLocation({
-                                        lat: location?.lat,
-                                        long: parseFloat(e.target.value),
-                                      })
-                                    }
-                                  />
-                                </div>
-                              </div>
-                            </>
-                          )}
+                            </div>
+                          </>
                         </>
                       )}
                     </>
@@ -588,6 +618,14 @@ export default function SignUpComponent() {
           setOpen={setOpen}
           selectedSlots={selectedSlots}
           setSelectedSlots={setSelectedSlots}
+        />
+      )}
+      {cardDetailsPopup && (
+        <CardDetailsPopup
+          open={cardDetailsPopup}
+          setOpen={setCardDetailsPopup}
+          cardDetails={cardDetails}
+          setCardDetails={setcardDetails}
         />
       )}
     </MaxWidthWrapper>
