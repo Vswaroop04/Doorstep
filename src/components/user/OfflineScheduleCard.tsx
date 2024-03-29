@@ -26,21 +26,24 @@ export function OfflineMeetingCard({
             Here is the list of offline schedules
           </CardDescription>
         </CardHeader>
-        <CardContent>s
-          {offlineSchedules?.map((ofsc) => (
-            <OfflineSchedulesUser
-              key={ofsc.id}
-              providerId={ofsc.providerId}
-              providerEmail={ofsc.provider?.email || ""}
-              providerName={ofsc?.provider?.name || ""}
-              providerMobile={ofsc?.provider?.mobile || 0}
-              offlinsSlotTime={ofsc.offlineSlotTime}
-              offlineSlotDuration={ofsc.offlineSlotDuration || 0}
-              date={ofsc.date}
-              status={ofsc.status}
-              price = {ofsc.provider?.offlinePrice}
-            />
-          ))}
+        <CardContent>
+          {offlineSchedules?.map(
+            (ofsc) =>
+              ofsc.status != null && (
+                <OfflineSchedulesUser
+                  key={ofsc.id}
+                  providerId={ofsc.providerId}
+                  providerEmail={ofsc.provider?.email || ""}
+                  providerName={ofsc?.provider?.name || ""}
+                  providerMobile={ofsc?.provider?.mobile || 0}
+                  offlinsSlotTime={ofsc.offlineSlotTime}
+                  offlineSlotDuration={ofsc.offlineSlotDuration || 0}
+                  date={ofsc.date}
+                  status={ofsc.status}
+                  price={ofsc.provider?.offlinePrice}
+                />
+              )
+          )}
         </CardContent>
       </Card>
     </div>

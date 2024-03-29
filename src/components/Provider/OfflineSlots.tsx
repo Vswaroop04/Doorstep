@@ -97,6 +97,15 @@ export default function OfflineSlots({
     try {
       toast.message("Updating Status");
       await updateOfscStatus({ id, status });
+      const newOfsc = ofsc?.map((schedule) => {
+        if (schedule.id === id) {
+          return { ...schedule, status };
+        }
+        return schedule;
+      });
+
+      setOfsc(newOfsc);
+
       toast.success("Status Saved Successfully");
     } catch (e) {
       console.log(e);
@@ -235,49 +244,40 @@ export default function OfflineSlots({
                               ) && (
                                 <tr key={schedule.id}>
                                   <td className="px-4 py-2">
-                                    <button
-                                      className="focus:outline-none"
-                                      onClick={() => handleSelect(schedule.id)}
-                                    >
-                                      {schedule.status === "selected" ? (
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          className="h-6 w-6 text-green-500"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M5 13l4 4L19 7"
-                                          />
-                                        </svg>
-                                      ) : (
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          className="h-6 w-6 text-gray-400"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          stroke="currentColor"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                          />
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M10 20v-2m0 0v-2m0 2h2m-2 0H8m8-4a7 7 0 00-7-7V3a1 1 0 00-2 0v6a1 1 0 00.293.707l4 4a1 1 0 001.414 0l4-4A1 1 0 0018 9V3a1 1 0 00-2 0v6a1 1 0 00.293.707l-3.5 3.5a1 1 0 01-1.414 0L8.707 9.707A1 1 0 008 10V4a1 1 0 00-2 0v6a1 1 0 00.293.707l-4 4a1 1 0 001.414 1.414l3.5-3.5A1 1 0 018 14V20a7 7 0 007 0z"
-                                          />
-                                        </svg>
-                                      )}
-                                    </button>
+                                    <label className="flex items-center">
+                                      <input
+                                        type="checkbox"
+                                        className="hidden"
+                                        checked={schedule.status === "Selected"}
+                                        onChange={() =>
+                                          handleSelect(schedule.id)
+                                        }
+                                      />
+                                      <div
+                                        className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center mr-2 cursor-pointer transition-colors duration-200 ${
+                                          schedule.status === "Selected"
+                                            ? "bg-green-500 border-green-500"
+                                            : "bg-white"
+                                        }`}
+                                      >
+                                        {schedule.status === "Selected" && (
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-9 w-4 text-white"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                          >
+                                            <path
+                                              fillRule="evenodd"
+                                              d="M4.293 10.293a1 1 0 0 1 1.414 0L9 13.586l5.293-5.293a1 1 0 1 1 1.414 1.414l-6 6a1 1 0 0 1-1.414 0l-6-6a1 1 0 0 1 0-1.414z"
+                                              clipRule="evenodd"
+                                            />
+                                          </svg>
+                                        )}
+                                      </div>
+                                    </label>
                                   </td>
+
                                   <td className="px-4 py-2">
                                     {schedule.user?.name}
                                   </td>
@@ -456,21 +456,17 @@ export default function OfflineSlots({
                               <option value="Scheduled">Schedule</option>
                               <option value="Completed">Completed</option>
                             </>
-                          ) : (
+                          ) : meeting.status === "Scheduled" ? (
                             <>
-                              {meeting.status === "Scheduled" ? (
-                                <>
-                                  <option value="Selected">-</option>
-                                  <option value="Completed">Completed</option>
-                                </>
-                              ) : (
-                                <>
-                                  {" "}
-                                  <option value="Scheduled">Scheduled</option>
-                                  <option value="Completed">Completed</option>
-                                </>
-                              )}
+                              <option value="Scheduled">Scheduled</option>
+                              <option value="Completed">Completed</option>
                             </>
+                          ) : meeting.status == "Completed" ? (
+                            <div className="text-green">{meeting.status}</div>
+                          ) : meeting.status == "Cancelled" ? (
+                            <div className="text-red">{meeting.status}</div>
+                          ) : (
+                            <>{meeting.status}</>
                           )}
                           {meeting.status !== "Selected" && (
                             <option value="Cancelled">Cancelled</option>
