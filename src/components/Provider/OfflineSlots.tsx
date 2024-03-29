@@ -39,17 +39,21 @@ import { cn } from "@/lib/utils";
 import { scheduleOfflineMeeting } from "@/lib/fetchers/scheduleOfflineMeeting";
 import { toast } from "sonner";
 import { updateOfscStatus } from "@/lib/fetchers/updateScheduleStatus";
+import { OfflineMeetingPopup } from "./offlineMeetingReqsPopup";
 
 export default function OfflineSlots({
   offlineDur,
   filteredOfsc,
+  onlineMeetings,
 }: {
   offlineDur: number;
   filteredOfsc?: OfflineSchedule[];
+  onlineMeetings?: OfflineSchedule[];
 }) {
   const [offlineDuration, setOfflineDuration] = useState<number>(offlineDur);
   const [openPopup, setOpenPopup] = useState(false);
   const [ofsc, setOfsc] = useState(filteredOfsc);
+  const [openOfflineMeetingReq, setopenOfflineMeetingReq] = useState(false);
   const [selectedChanges, setSelectedChanges] = useState<
     Partial<OfflineSchedule>
   >({});
@@ -159,7 +163,13 @@ export default function OfflineSlots({
 
   return (
     <div>
-      {" "}
+      <button
+        className="flex flex-col justify-center mx-auto p-1 hover:bg-custom bg-slate-200  font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2"
+        onClick={() => setopenOfflineMeetingReq(true)}
+      >
+        <span className="text-xl font-medium">Offline</span>
+        <span className="block text-xs text-slate-600">Meeting Requests</span>
+      </button>{" "}
       <Sheet key={"right"}>
         <div className="p-6 pt-0">
           <div className="flex items-center justify-between space-y-2">
@@ -480,6 +490,11 @@ export default function OfflineSlots({
         offlineDuration={offlineDuration}
         setOfflineDuration={setOfflineDuration}
       />
+      <OfflineMeetingPopup
+        open={openOfflineMeetingReq}
+        setOpen={setopenOfflineMeetingReq}
+        meetings={onlineMeetings}
+      />{" "}
     </div>
   );
 }

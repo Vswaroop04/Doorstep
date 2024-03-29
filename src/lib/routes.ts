@@ -243,7 +243,8 @@ export const approveMeetingWithCustomer = async (
 
 export const offlineMeetingReqToUser = async (
   providerId: string,
-  userId: string
+  userId: string,
+  offlinePrice: number
 ) => {
   const existingSchedule = await db
     .select()
@@ -263,12 +264,13 @@ export const offlineMeetingReqToUser = async (
         providerId: providerId || "",
         userId: userId || "",
         status: "requested",
+        offlinePrice,
       })
       .execute();
   } else {
     await db
       .update(OnlineMeetingReq)
-      .set({ status: "requested" })
+      .set({ status: "requested", offlinePrice })
       .where(
         and(
           eq(OnlineMeetingReq.providerId, providerId || ""),
@@ -317,26 +319,27 @@ export const approveOfflineReq = async (id: string, status: string) => {
     .set({ status: status })
     .where(eq(OnlineMeetingReq.id, id))
     .returning();
-
-  const existingSchedule = await db
-    .select()
-    .from(OfflineSchedules)
-    .where(
-      and(
-        eq(OfflineSchedules.providerId, meeting[0]?.providerId || ""),
-        eq(OfflineSchedules.userId, meeting[0].userId || "")
+  if (status == "Approved") {
+    const existingSchedule = await db
+      .select()
+      .from(OfflineSchedules)
+      .where(
+        and(
+          eq(OfflineSchedules.providerId, meeting[0]?.providerId || ""),
+          eq(OfflineSchedules.userId, meeting[0].userId || "")
+        )
       )
-    )
-    .execute();
-
-  if (existingSchedule.length === 0) {
-    await db
-      .insert(OfflineSchedules)
-      .values({
-        providerId: meeting[0].providerId || "",
-        userId: meeting[0].userId || "",
-      })
       .execute();
+
+    if (existingSchedule.length === 0) {
+      await db
+        .insert(OfflineSchedules)
+        .values({
+          providerId: meeting[0].providerId || "",
+          userId: meeting[0].userId || "",
+        })
+        .execute();
+    }
   }
   return { message: `${status} Updated Succesfully` };
 };

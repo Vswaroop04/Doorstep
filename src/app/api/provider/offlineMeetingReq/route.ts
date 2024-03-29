@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const TypeReqAcceptRequest = z.object({
   userId: z.string(),
+  offlinePrice: z.number(),
 });
 
 export async function POST(req: NextRequest) {
@@ -17,10 +18,11 @@ export async function POST(req: NextRequest) {
       );
     }
     const body = await req.json();
-    const { userId } = TypeReqAcceptRequest.parse(body);
+    const { userId, offlinePrice } = TypeReqAcceptRequest.parse(body);
     const approvedMeeting = await offlineMeetingReqToUser(
       session?.provider?.id,
-      userId
+      userId,
+      offlinePrice
     );
 
     if ("message" in approvedMeeting) {

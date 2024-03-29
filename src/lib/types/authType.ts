@@ -80,6 +80,7 @@ export interface OfflineSchedule {
   priority: number;
   createdAt: string;
   updatedAt: string;
+  offlinePrice?: number;
   provider?: Provider;
   user?: User;
 }

@@ -1,10 +1,13 @@
-export const offlineMeetingReq = async (userId: string) => {
+export const offlineMeetingReq = async (
+  userId: string,
+  offlinePrice: number
+) => {
   const response = await fetch("/api/provider/offlineMeetingReq", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ userId, offlinePrice }),
   });
 
   const res = await response.json();

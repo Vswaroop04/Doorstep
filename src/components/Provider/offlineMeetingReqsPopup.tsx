@@ -44,20 +44,24 @@ export async function OfflineMeetingPopup({
   meetings,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   meetings?: OfflineSchedule[];
 }) {
   console.log(meetings);
   const [Umeetings, setUMeetings] = useState(meetings);
-  async function sendReq(userId: string) {
+  const [offlinePrices, setOfflinePrices] = useState<{ [key: string]: number }>(
+    {}
+  );
+
+  async function sendReq(userId: string, offlinePrice: number) {
     try {
       toast.info("Sending Req");
-      await offlineMeetingReq(userId);
-      toast.success("Approved Request Successfully");
+      await offlineMeetingReq(userId, offlinePrice);
+      toast.success(" Request Sent Successfully");
       setUMeetings((prevMeetings: any) =>
         prevMeetings.map((meeting: any) =>
           meeting.userId === userId
-            ? { ...meeting, status: "Requested" }
+            ? { ...meeting, status: "requested" }
             : meeting
         )
       );
@@ -65,6 +69,10 @@ export async function OfflineMeetingPopup({
       toast.error("Error: Try Again");
     }
   }
+
+  const handlePriceChange = (userId: string, price: number) => {
+    setOfflinePrices((prevPrices) => ({ ...prevPrices, [userId]: price }));
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,6 +92,8 @@ export async function OfflineMeetingPopup({
               <TableHead className="w-[100px]">Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Mobile</TableHead>
+              <TableHead> Offline Price (in $/Hr)</TableHead>
+
               <TableHead className="text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -93,21 +103,54 @@ export async function OfflineMeetingPopup({
                 <TableCell className="font-medium">
                   {meeting?.user?.name}
                 </TableCell>
-                <TableCell>{meeting?.user?.email}</TableCell>
+                <TableCell className="w-20 break-words">
+                  {meeting?.user?.email}
+                </TableCell>{" "}
+                {/* Set maximum width and allow wrapping */}
                 <TableCell>{meeting?.user?.mobile}</TableCell>
+                <TableCell>
+                  {meeting.status === "Approved" ||
+                  meeting.status === "requested" ? (
+                    <span>
+                      {offlinePrices[meeting.userId] || meeting?.offlinePrice}
+                    </span>
+                  ) : (
+                    <OfflinePriceInput
+                      userId={meeting.userId}
+                      price={offlinePrices[meeting.userId]}
+                      onPriceChange={handlePriceChange}
+                    />
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   {meeting.status === "requested" ? (
                     <div className="border-green-500 text-green-500 p-1">
                       Requested
                     </div>
-                  ) : meeting.status === "rejected" ? (
-                    <div className="border-red-500 text-red-500 p-1">
-                      Rejected
+                  ) : meeting.status === "Rejected" ? (
+                    <>
+                      <div className="border-red-500 text-red-500 p-1">
+                        Rejected
+                      </div>
+                      <Button
+                        onClick={() =>
+                          sendReq(meeting.userId, offlinePrices[meeting.userId])
+                        }
+                        className="bg-green-500 text-white px-2 py-1 hover:bg-green-300 rounded mr-2"
+                      >
+                        Request Again
+                      </Button>
+                    </>
+                  ) : meeting.status === "Approved" ? (
+                    <div className="border-green-500 text-green-500 p-1">
+                      Approved
                     </div>
                   ) : (
                     <>
                       <Button
-                        onClick={() => sendReq(meeting.userId)}
+                        onClick={() =>
+                          sendReq(meeting.userId, offlinePrices[meeting.userId])
+                        }
                         className="bg-green-500 text-white px-2 py-1 hover:bg-green-300 rounded mr-2"
                       >
                         Request
@@ -129,5 +172,25 @@ export async function OfflineMeetingPopup({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function OfflinePriceInput({
+  userId,
+  price,
+  onPriceChange,
+}: {
+  userId: string;
+  price: number;
+  onPriceChange: (userId: string, price: number) => void;
+}) {
+  return (
+    <input
+      type="number"
+      placeholder="Offline Price"
+      value={price}
+      onChange={(e) => onPriceChange(userId, parseInt(e.target.value))}
+      className="h-10 w-24 rounded-md border border-input bg-background" // Adjusted width
+    />
   );
 }

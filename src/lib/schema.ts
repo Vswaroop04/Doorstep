@@ -192,6 +192,7 @@ export const OnlineMeetingReq = pgTable(
     date: text("date"),
     offlineSlotTime: text("slotTime"),
     offlineSlotDuration: customFloat("slotDuration"),
+    offlinePrice: customFloat("offlinePrice"),
     status: text("status"),
     priority: integer("priority"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),

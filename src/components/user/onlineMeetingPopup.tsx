@@ -45,7 +45,7 @@ export async function OfflineMeetingPopupUser({
   meetings,
 }: {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   meetings?: OfflineSchedule[];
 }) {
   console.log(meetings);
@@ -81,8 +81,12 @@ export async function OfflineMeetingPopupUser({
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Name</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead className="w-[100px]">Email</TableHead>
               <TableHead>Mobile</TableHead>
+              <TableHead className="text-center">
+                {" "}
+                Offline Price (in $/Hr)
+              </TableHead>
               <TableHead className="text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -92,8 +96,12 @@ export async function OfflineMeetingPopupUser({
                 <TableCell className="font-medium">
                   {meeting?.provider?.name}
                 </TableCell>
-                <TableCell>{meeting?.provider?.email}</TableCell>
+                <TableCell className="text-wrap">
+                  {meeting?.provider?.email}
+                </TableCell>
                 <TableCell>{meeting?.provider?.mobile}</TableCell>
+                <TableCell>{meeting?.offlinePrice}</TableCell>
+
                 <TableCell className="text-right">
                   {meeting.status === "Approved" ? (
                     <div className="border-green-500 text-green-500 p-1">
@@ -104,10 +112,12 @@ export async function OfflineMeetingPopupUser({
                       Rejected
                     </div>
                   ) : (
-                    <>
+                    <div className="flex gap-2">
+                      {" "}
+                      {/* New */}
                       <Button
                         onClick={() => sendReq(meeting.id, "Approved")}
-                        className="bg-green-500 text-white px-2 py-1 hover:bg-green-300 rounded mr-2"
+                        className="bg-green-500 text-white px-2 py-1 hover:bg-green-300 rounded"
                       >
                         Approve
                       </Button>
@@ -117,7 +127,7 @@ export async function OfflineMeetingPopupUser({
                       >
                         Reject
                       </Button>
-                    </>
+                    </div>
                   )}
                 </TableCell>
               </TableRow>
