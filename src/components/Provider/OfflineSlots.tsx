@@ -163,7 +163,7 @@ export default function OfflineSlots({
 
   const dateOptions = [todayFormatted, nextDayFormatted];
 
-  const durationOptions = Array.from({ length: 10 }, (_, i) => (i + 1) * 0.5);
+  const durationOptions = Array.from({ length: 11 }, (_, i) => i * 0.5);
 
   const priorityOptions = Array.from(
     { length: (ofsc || []).length },
