@@ -44,7 +44,7 @@ export default function OfflineSchedulesUser({
       setFeedback(response);
     };
     fetchFeedback();
-  }, [providerId]);
+  }, []);
 
   return (
     <div className="rounded-lg border border-gray-200 p-4 shadow-md">

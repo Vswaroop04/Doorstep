@@ -133,7 +133,6 @@ export default function OfflineSlots({
     scheduleId: string,
     updatedFields: Partial<OfflineSchedule>
   ) => {
-    console.log(scheduleId, updatedFields);
     setOfsc((prevOfsc) =>
       prevOfsc?.map((schedule) =>
         schedule.id === scheduleId
@@ -341,15 +340,12 @@ export default function OfflineSlots({
                                             ofsc.status != "Completed" &&
                                             ofsc.status != "Cancelled"
                                           ) {
-                                            console.log(
-                                              ofsc.offlineSlotDuration
-                                            );
+                           
                                             OfflineScheduleTime =
                                               OfflineScheduleTime +
                                               ofsc.offlineSlotDuration;
                                           }
                                         });
-                                        console.log(OfflineScheduleTime);
                                         if (
                                           OfflineScheduleTime > offlineDuration
                                         ) {

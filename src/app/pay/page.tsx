@@ -6,9 +6,12 @@ import { useState } from "react";
 export default function Page() {
   const params = useSearchParams();
   const sessionFee: any = params.get("price");
-  const tax1 = sessionFee * 0.15; // 15% tax
-  const tax2 = sessionFee * 0.12; // 12% tax
-  const totalCharge = parseFloat(sessionFee) + tax1 + tax2; // Total charge
+  const taxa = sessionFee * 0.15; // 15% tax
+  const taxb = sessionFee * 0.12; // 12% tax
+  const tax1 = taxa.toFixed(2); // 15% tax
+  const tax2 = taxb.toFixed(2); // 15% tax
+  const roundedTotalCharge = parseFloat(sessionFee) + taxa + taxb; // Total charge
+  const totalCharge = roundedTotalCharge.toFixed(2); // Round total charge to 2 decimal places
 
   const [isCardSelected, setIsCardSelected] = useState(true);
   const [isPaymentDone, setisPaymentDone] = useState(false);
@@ -23,23 +26,23 @@ export default function Page() {
 
   return (
     <section className="antialiased bg-gray-100 text-gray-600 min-h-screen p-4">
-        {isPaymentDone ? (
-          <div className="mt-50">
-            {" "}
-            <div className="flex flex-col items-center justify-center text-green-500 ">
-              <CheckCircle size={64} />
-              <p className="text-lg font-semibold mt-4">Payment Successful</p>
-            </div>
+      {isPaymentDone ? (
+        <div className="mt-50">
+          {" "}
+          <div className="flex flex-col items-center justify-center text-green-500 ">
+            <CheckCircle size={64} />
+            <p className="text-lg font-semibold mt-4">Payment Successful</p>
           </div>
-        ) : (
-      <div className="h-full">
-        <h1 className="text-xl leading-snug text-gray-800 font-semibold mb-2 pt-8 flex justify-center">
-          Payment Details
-        </h1>
-        <div
-          className="relative px-4 sm:px-6 lg:px-8 pb-8 max-w-xl   mx-auto"
-          x-data="{ card: true }"
-        >
+        </div>
+      ) : (
+        <div className="h-full">
+          <h1 className="text-xl leading-snug text-gray-800 font-semibold mb-2 pt-8 flex justify-center">
+            Payment Details
+          </h1>
+          <div
+            className="relative px-4 sm:px-6 lg:px-8 pb-8 max-w-xl   mx-auto"
+            x-data="{ card: true }"
+          >
             <div className="bg-white px-8 pb-6 rounded-b shadow-lg">
               <div className="text-center mb-6">
                 <h1 className="text-lg underline leading-snug text-gray-800 font-semibold mb-2 pt-8  ml-8">
@@ -109,7 +112,10 @@ export default function Page() {
                   <div className="space-y-4">
                     <div className="mt-6">
                       <div className="mb-4">
-                        <button className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2" onClick={()=> setisPaymentDone(true)}>
+                        <button
+                          className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2"
+                          onClick={() => setisPaymentDone(true)}
+                        >
                           Pay ${totalCharge} Using Your Saved Card
                         </button>
                       </div>
@@ -136,9 +142,9 @@ export default function Page() {
                 )}
               </div>
             </div>
+          </div>
         </div>
-      </div>
-          )}
+      )}
     </section>
   );
 }

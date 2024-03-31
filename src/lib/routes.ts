@@ -702,12 +702,14 @@ export async function userFeedback(feedback: TypeUserFeedback) {
 }
 
 export async function FeedbackExists(providerId: string, userId: string) {
-  const ratingExist = await db.query.Ratings.findFirst({
-    where: (ratings, { eq }) =>
-      eq(ratings.userId, userId) && eq(ratings.providerId, providerId),
+  const ratingExist1 = await db.query.Ratings.findFirst({
+    where: (ratings, { eq }) => eq(ratings.userId, userId),
+  });
+  const ratingExist2 =  await db.query.Ratings.findFirst({
+    where: (ratings, { eq }) => eq(ratings.providerId, providerId),
   });
 
-  return !!ratingExist;
+  return ratingExist1 && ratingExist2;
 }
 export async function getSlots(ProviderId: string) {
   return await db.query.Slots.findMany({

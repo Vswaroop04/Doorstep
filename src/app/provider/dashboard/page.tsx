@@ -43,7 +43,6 @@ const Services = () => {
     newDate.setDate(newDate.getDate());
 
     const nextDayISOString = newDate.toISOString().split("T")[0];
-    console.log(nextDayISOString);
     const filtered = auth?.provider?.slots
       ?.filter((slot) => slot.date === nextDayISOString)
       .sort((a, b) => {

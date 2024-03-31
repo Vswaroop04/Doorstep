@@ -48,7 +48,6 @@ export async function OfflineMeetingPopupUser({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   meetings?: OfflineSchedule[];
 }) {
-  console.log(meetings);
   const [Umeetings, setUMeetings] = useState(meetings);
   async function sendReq(id: string, status: string) {
     try {

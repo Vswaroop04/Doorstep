@@ -61,7 +61,6 @@ export type User = {
 const Cell = ({ row }: { row: any }) => {
   const User = row.original;
   const [open, setOpen] = React.useState(false);
-  console.log(User);
   return (
     <>
       <div className="mr-4">

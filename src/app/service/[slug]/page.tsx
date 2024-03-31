@@ -5,7 +5,6 @@ import { serviceExists } from "@/lib/fetchers/serviceExists";
 export default async function Page({ params }: { params: { slug: string } }) {
   const service = await serviceExists(params.slug);
   const providerService = params.slug;
-  console.log(providerService);
   if (!service.services.success) {
     return (
       <div className="relative">

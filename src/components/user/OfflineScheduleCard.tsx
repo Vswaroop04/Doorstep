@@ -17,7 +17,6 @@ export function OfflineMeetingCard({
 }: {
   offlineSchedules?: OfflineSchedule[];
 }) {
-  console.log(offlineSchedules);
   return (
     <div>
       <Card className="">

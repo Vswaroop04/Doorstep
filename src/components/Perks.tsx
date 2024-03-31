@@ -30,7 +30,7 @@ export const perks = [
     href: "/service/Tutor",
 
     description:
-      "Experience the craftsmanship of our carpentry services. From custom furniture to home renovations, we bring your vision to life with meticulous attention to detail.",
+      "Unlock your potential with our tutoring services. Whether it's academic support, test preparation, or skill development, our tutors provide personalized guidance tailored to your learning style. Empower yourself to succeed with our dedicated and experienced educators.",
   },
   {
     name: "Doctor",
