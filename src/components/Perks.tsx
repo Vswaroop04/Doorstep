@@ -1,4 +1,11 @@
-import { Axe, NotepadText, Paintbrush2, Plug, Stethoscope, Wrench } from "lucide-react";
+import {
+  Axe,
+  NotepadText,
+  Paintbrush2,
+  Plug,
+  Stethoscope,
+  Wrench,
+} from "lucide-react";
 
 export const perks = [
   {
@@ -38,7 +45,7 @@ export const perks = [
     href: "/service/Doctor",
 
     description:
-      "Experience the craftsmanship of our carpentry services. From custom furniture to home renovations, we bring your vision to life with meticulous attention to detail.",
+      "Experience the compassionate care and expertise of our medical professionals with our Doctor services. From routine check-ups to specialized treatments, we prioritize your health and well-being. Trust in our commitment to providing personalized care and support for all your medical needs.",
   },
   {
     name: "Painting",

@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { perks } from "@/components/Perks";
 import useAuth from "@/hooks/useAuth";
+import { BookAServiceButton } from "@/components/home/BookAServiceButton";
 
 export default function Home() {
   return (
@@ -23,7 +24,7 @@ export default function Home() {
               {" "}
               Browse Services
             </Link>
-            <Button variant={"outline"}> Book a Service &rarr; </Button>
+            <BookAServiceButton />
           </div>
         </div>
       </MaxWidthWrapper>

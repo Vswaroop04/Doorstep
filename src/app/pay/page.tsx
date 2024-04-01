@@ -2,8 +2,10 @@
 import { CheckCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter()
   const params = useSearchParams();
   const sessionFee: any = params.get("price");
   const taxa = sessionFee * 0.15; // 15% tax
@@ -129,7 +131,9 @@ export default function Page() {
                   <div x-show="!card" x-cloak>
                     <div>
                       <div className="mb-4">
-                        <button className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2">
+                        <button className="font-medium text-sm inline-flex items-center justify-center px-3 py-2 border border-transparent rounded leading-5 shadow-sm transition duration-150 ease-in-out w-full bg-indigo-500 hover:bg-indigo-600 text-white focus:outline-none focus-visible:ring-2" onClick={()=>{
+                          router.push("https://www.paypal.com/in/home")
+                        }}>
                           Pay with PayPal - ${totalCharge}
                         </button>
                       </div>

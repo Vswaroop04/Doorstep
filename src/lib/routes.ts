@@ -563,6 +563,9 @@ export async function getUser(email: string, hashedPassword: string) {
     hashedPassword,
     usersWithRelations?.password
   );
+  if (!validPassword) {
+    return { message: "Wrong password" };
+  }
 
   return {
     user: usersWithRelations,
@@ -670,7 +673,6 @@ export async function getUserById(id: string) {
     user: usersWithRelations,
   };
 }
-
 export async function userFeedback(feedback: TypeUserFeedback) {
   await db.transaction(async (tx) => {
     const provider = await tx.query.Providers.findFirst({
@@ -692,6 +694,9 @@ export async function userFeedback(feedback: TypeUserFeedback) {
         totalAvgRating = averageRating + provider?.averageRating;
       }
 
+      // Ensure totalAvgRating doesn't exceed 10
+      totalAvgRating = Math.min(totalAvgRating, 9.76);
+
       await tx
         .update(Providers)
         .set({ averageRating: totalAvgRating })
@@ -701,11 +706,12 @@ export async function userFeedback(feedback: TypeUserFeedback) {
   return await db.insert(Ratings).values(feedback).returning();
 }
 
+
 export async function FeedbackExists(providerId: string, userId: string) {
   const ratingExist1 = await db.query.Ratings.findFirst({
     where: (ratings, { eq }) => eq(ratings.userId, userId),
   });
-  const ratingExist2 =  await db.query.Ratings.findFirst({
+  const ratingExist2 = await db.query.Ratings.findFirst({
     where: (ratings, { eq }) => eq(ratings.providerId, providerId),
   });
 
@@ -760,6 +766,9 @@ export async function getProviders(
         long: Providers.long,
         serviceName: Providers.serviceName,
         averageRating: Providers.averageRating,
+        offlinePrice : Providers.offlinePrice,
+
+        onlinePrice : Providers.onlinePrice,
         createdAt: Providers.createdAt,
         updatedAt: Providers.updatedAt,
         distance:

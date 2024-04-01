@@ -48,7 +48,7 @@ export default function SignInComponent() {
     onSuccess: (data, variables, context) => {
       toast.success(data.message);
       setAuth(data);
-      router.push("/user/services");
+      router.push("/");
     },
   });
   const providerMutation = useMutation({

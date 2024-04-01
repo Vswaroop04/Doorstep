@@ -9,6 +9,7 @@ import { OfflineMeetingCard } from "@/components/user/OfflineScheduleCard";
 import { MeetingCard } from "@/components/user/MeetingsCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { OfflineMeetingPopupUser } from "@/components/user/onlineMeetingPopup";
+import { Bell } from "lucide-react";
 
 const Services = () => {
   const router = useRouter();
@@ -56,13 +57,24 @@ const Services = () => {
             </div>
           </div>
         </div>
-        <button
-          className="flex flex-col p-1 hover:bg-custom bg-slate-200  font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2"
+        <div
+          className="relative cursor-pointer bg-slate-200 text-center"
           onClick={() => setopenOfflineMeetingReq(true)}
         >
-          <span className="text-xl font-medium">Offline</span>
-          <span className="block text-xs text-slate-600">Meeting Requests</span>
-        </button>
+          <div className="outline-blue-400 p-2 pr-3 ">
+            <span className="text-xl font-medium">Offline</span>
+            <span className="block text-xs text-slate-600">
+              Meeting Requests
+            </span>
+          </div>
+          {auth?.user?.OnlineMeetingReq?.some(
+            (meeting) => meeting.status === "requested"
+          ) && (
+            <div className="absolute bottom-10 right-0 bg-red-500 text-white w-7 h-7 flex items-center justify-center rounded-full">
+              <Bell />
+            </div>
+          )}
+        </div>
         <h2 className="text-2xl font-normal tracking-tight flex justify-center mx-auto">
           Meetings
         </h2>

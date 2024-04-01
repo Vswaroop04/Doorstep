@@ -48,21 +48,22 @@ const Ratings = ({ provider }: { provider: any }) => {
   };
 
   return (
-    <div>
-      <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+    <>
+      <h3 className="text-lg font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong flex items-center mx-0 justify-center">
         Average Ratings
       </h3>
-      <BarChart
-        className="mt-4 h-72"
-        data={chartData || []}
-        index="date"
-        categories={["Rating"]}
-        colors={["blue"]}
-        yAxisWidth={30}
-        
-        customTooltip={customTooltip}
-      />
-    </div>
+      <div className="flex items-center mx-0 justify-center">
+        <BarChart
+          className="mt-4 h-72 max-w-screen-lg "
+          data={chartData || []}
+          index="date"
+          categories={["Rating"]}
+          colors={["blue"]}
+          yAxisWidth={10}
+          customTooltip={customTooltip}
+        />
+      </div>
+    </>
   );
 };
 

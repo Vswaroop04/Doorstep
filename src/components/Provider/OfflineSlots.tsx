@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Bell,
   CalendarCheck2,
   CalendarIcon,
   Command,
@@ -171,13 +172,20 @@ export default function OfflineSlots({
 
   return (
     <div>
-      <button
-        className="flex flex-col justify-center mx-auto p-1 hover:bg-custom bg-slate-200  font-semibold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out items-center space-x-2"
+      <div
+        className="relative cursor-pointer bg-slate-200 text-center"
         onClick={() => setopenOfflineMeetingReq(true)}
       >
-        <span className="text-xl font-medium">Offline</span>
-        <span className="block text-xs text-slate-600">Meeting Requests</span>
-      </button>{" "}
+        <div className="outline-blue-400 p-2 pr-3 ">
+          <span className="text-xl font-medium">Offline</span>
+          <span className="block text-xs text-slate-600">Meeting Requests</span>
+        </div>
+        {onlineMeetings?.some((meeting) => meeting.status === "Approved") && (
+          <div className="absolute bottom-10 right-0 bg-red-500 text-white w-7 h-7 flex items-center justify-center rounded-full">
+            <Bell />
+          </div>
+        )}
+      </div>
       <Sheet key={"right"}>
         <div className="p-6 pt-0">
           <div className="flex items-center justify-between space-y-2">
@@ -340,7 +348,6 @@ export default function OfflineSlots({
                                             ofsc.status != "Completed" &&
                                             ofsc.status != "Cancelled"
                                           ) {
-                           
                                             OfflineScheduleTime =
                                               OfflineScheduleTime +
                                               ofsc.offlineSlotDuration;
@@ -424,29 +431,34 @@ export default function OfflineSlots({
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {ofsc?.map(
-                (meeting) =>
-                  meeting.status !== null && (
-                    <TableRow key={meeting.id}>
-                      <TableCell>{meeting?.date}</TableCell>
-                      <TableCell>{meeting?.offlineSlotTime}</TableCell>
-                      <TableCell>{meeting?.offlineSlotDuration}</TableCell>
-                      <TableCell className="font-medium">
-                        {meeting?.user?.name}
-                      </TableCell>
-                      <TableCell>{meeting?.user?.email}</TableCell>
-                      <TableCell>{meeting?.user?.mobile}</TableCell>
-                      <TableCell>{meeting?.priority}</TableCell>
-                      <TableCell>
-                        <select
-                          className={"w-[100px] p-2 font-normal border"}
-                          value={meeting.status}
-                          onChange={(e) =>
-                            updateScheduleStatus(meeting.id, e.target.value)
-                          }
-                        >
-                          {meeting.status === "Selected" ? (
+           <TableBody>
+  {ofsc?.map(
+    (meeting) =>
+      meeting.status !== null && (
+        <TableRow key={meeting.id}>
+          <TableCell>{meeting?.date}</TableCell>
+          <TableCell>{meeting?.offlineSlotTime}</TableCell>
+          <TableCell>{meeting?.offlineSlotDuration}</TableCell>
+          <TableCell className="font-medium">
+            {meeting?.user?.name}
+          </TableCell>
+          <TableCell>{meeting?.user?.email}</TableCell>
+          <TableCell>{meeting?.user?.mobile}</TableCell>
+          <TableCell>{meeting?.priority}</TableCell>
+          <TableCell>
+            {meeting.status === "Completed" || meeting.status === "Cancelled" ? (
+              <div className={meeting.status === "Completed" ? "text-green-900" : "text-red-900"}>
+                {meeting.status}
+              </div>
+            ) : (
+              <select
+                className={"w-[100px] p-2 font-normal border"}
+                value={meeting.status}
+                onChange={(e) =>
+                  updateScheduleStatus(meeting.id, e.target.value)
+                }
+              >
+                    {meeting.status === "Selected" ? (
                             <>
                               <option value="Selected">Selected</option>
                               <option value="Scheduled">Schedule</option>
@@ -454,7 +466,8 @@ export default function OfflineSlots({
                             </>
                           ) : meeting.status === "Scheduled" ? (
                             <>
-                              <option value="Scheduled">Scheduled</option>
+                                                          <option value="Scheduled"> Scheduled </option>
+
                               <option value="Completed">Completed</option>
                             </>
                           ) : meeting.status == "Completed" ? (
@@ -464,15 +477,17 @@ export default function OfflineSlots({
                           ) : (
                             <>{meeting.status}</>
                           )}
-                          {meeting.status !== "Selected" && (
+                          {meeting.status !== "Selected" && meeting.status !== "Completed"&& meeting.status !== "Cancelled" && (
                             <option value="Cancelled">Cancelled</option>
                           )}
-                        </select>
-                      </TableCell>
-                    </TableRow>
-                  )
-              )}
-            </TableBody>
+              </select>
+            )}
+          </TableCell>
+        </TableRow>
+      )
+  )}
+</TableBody>
+
           </Table>
         </div>
       </Sheet>

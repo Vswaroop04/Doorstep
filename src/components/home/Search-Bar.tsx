@@ -51,7 +51,10 @@ export const SearchBar = () => {
         >
           <ul className="p-4">
             {searchResults.services.map((result, index) => (
-              <Link key={index} href={`/service/${result.serviceName}`}>
+              <Link key={index} href={`/service/${result.serviceName}`} onClick={() => {
+                setSearchQuery("")
+                setSearchResults({services : []})
+              }}>
                 <li className="border-b border-gray-200 py-4 hover:bg-gray-100">
                   <div className="block w-full px-4 py-2 text-sm font-medium text-gray-900">
                     {result.serviceName}
