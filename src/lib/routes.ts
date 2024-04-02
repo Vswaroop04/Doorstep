@@ -308,10 +308,46 @@ export const updateStatusOfflineSchedule = async (
   id: string,
   status: string
 ) => {
-  return await db
+  const ofsc = await db
     .update(OfflineSchedules)
     .set({ status: status })
-    .where(eq(OfflineSchedules.id, id));
+    .where(eq(OfflineSchedules.id, id))
+    .returning();
+  if (status === "Completed") {
+    await db
+      .delete(OfflineSchedules)
+      .where(
+        eq(OfflineSchedules.providerId, ofsc[0].providerId) &&
+          eq(OfflineSchedules.userId, ofsc[0].userId)
+      );
+    await db
+      .delete(OnlineMeetingReq)
+      .where(
+        eq(OnlineMeetingReq.providerId, ofsc[0].providerId) &&
+          eq(OnlineMeetingReq.userId, ofsc[0].userId)
+      );
+    const existingSchedule = await db
+      .select()
+      .from(OnlineMeetingReq)
+      .where(
+        and(
+          eq(OnlineMeetingReq.providerId, ofsc[0].providerId || ""),
+          eq(OnlineMeetingReq.userId, ofsc[0].userId || "")
+        )
+      )
+      .execute();
+
+    if (existingSchedule.length === 0) {
+      await db
+        .insert(OnlineMeetingReq)
+        .values({
+          providerId: ofsc[0]?.providerId || "",
+          userId: ofsc[0].userId || "",
+        })
+        .execute();
+    }
+  }
+  return ofsc;
 };
 export const approveOfflineReq = async (id: string, status: string) => {
   const meeting = await db
@@ -680,7 +716,7 @@ export async function userFeedback(feedback: TypeUserFeedback) {
     });
 
     if (provider) {
-      const maxRating = 10; 
+      const maxRating = 10;
       const averageRating =
         ((feedback.cleanliness ?? 0) / maxRating +
           (feedback.efficiency ?? 0) / maxRating +

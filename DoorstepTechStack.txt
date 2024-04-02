@@ -1,0 +1,17 @@
+Technologies Used -
+
+Next.js: Next.js is a React framework that provides server-side rendering, static site generation, and other features to simplify React application development. It offers features like automatic code splitting, route pre-fetching, and API routes, making it an excellent choice for building modern web applications.
+
+React: React is a JavaScript library for building user interfaces. It allows developers to create reusable UI components and manage the state of the application efficiently. React's declarative and component-based approach makes it easier to build complex user interfaces while maintaining a clear and organized codebase.
+
+Tailwind CSS: Tailwind CSS is a utility-first CSS framework that provides a set of pre-designed utility classes to style web applications. It allows developers to quickly build custom designs without writing custom CSS styles. Tailwind CSS promotes a "utility-first" approach to styling, where classes directly apply styling properties to HTML elements.
+
+ShadCN UI: ShadCN UI (Shadow CSS Neumorphism UI) is a UI component library built on top of Tailwind CSS, providing pre-designed components with a modern neumorphic design. It offers components like buttons, cards, modals, and more, helping developers create visually appealing interfaces with minimal effort.
+
+Radix UI: Radix UI is a collection of accessible, robust, and flexible UI components built with React. It includes components like dropdowns, tooltips, and popovers, designed to be highly customizable and easy to integrate into React applications. Radix UI emphasizes accessibility and performance, making it suitable for building inclusive web applications.
+
+PostgreSQL: PostgreSQL is a powerful open-source relational database management system. It offers features like ACID compliance, transactions, and support for complex queries and data types. PostgreSQL is widely used for storing and managing relational data in web applications, providing scalability, reliability, and performance.
+
+Drizzle ORM: Drizzle ORM is an Object-Relational Mapping (ORM) library for Node.js, designed to simplify database interactions in JavaScript applications. It provides an intuitive interface for defining database models, querying data, and managing database transactions. Drizzle ORM abstracts away the complexities of working directly with SQL, allowing developers to focus on building features.
+
+Vercel: Vercel is a cloud platform for deploying serverless functions, static websites, and full-stack applications. It offers seamless integration with Next.js, allowing developers to deploy their applications with a single command. Vercel provides features like automatic deployments, preview environments, and built-in CDN, enabling developers to ship their applications faster and more efficiently.
