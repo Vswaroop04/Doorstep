@@ -25,6 +25,7 @@ import {
   Command,
   Edit,
   Edit2Icon,
+  Trash2,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -106,7 +107,11 @@ export default function OfflineSlots({
       });
 
       setOfsc(newOfsc);
-
+      if (status == "Clear") {
+        toast.success("Cleared Successfully");
+        window.location.reload();
+        return;
+      }
       toast.success("Status Saved Successfully");
     } catch (e) {
       console.log(e);
@@ -426,68 +431,89 @@ export default function OfflineSlots({
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Mobile</TableHead>
-
                 <TableHead className="text-center">Priority</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Status</TableHead> <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
-           <TableBody>
-  {ofsc?.map(
-    (meeting) =>
-      meeting.status !== null && (
-        <TableRow key={meeting.id}>
-          <TableCell>{meeting?.date}</TableCell>
-          <TableCell>{meeting?.offlineSlotTime}</TableCell>
-          <TableCell>{meeting?.offlineSlotDuration}</TableCell>
-          <TableCell className="font-medium">
-            {meeting?.user?.name}
-          </TableCell>
-          <TableCell>{meeting?.user?.email}</TableCell>
-          <TableCell>{meeting?.user?.mobile}</TableCell>
-          <TableCell>{meeting?.priority}</TableCell>
-          <TableCell>
-            {meeting.status === "Completed" || meeting.status === "Cancelled" ? (
-              <div className={meeting.status === "Completed" ? "text-green-900" : "text-red-900"}>
-                {meeting.status}
-              </div>
-            ) : (
-              <select
-                className={"w-[100px] p-2 font-normal border"}
-                value={meeting.status}
-                onChange={(e) =>
-                  updateScheduleStatus(meeting.id, e.target.value)
-                }
-              >
-                    {meeting.status === "Selected" ? (
-                            <>
-                              <option value="Selected">Selected</option>
-                              <option value="Scheduled">Schedule</option>
-                              <option value="Completed">Completed</option>
-                            </>
-                          ) : meeting.status === "Scheduled" ? (
-                            <>
-                                                          <option value="Scheduled"> Scheduled </option>
-
-                              <option value="Completed">Completed</option>
-                            </>
-                          ) : meeting.status == "Completed" ? (
-                            <div className="text-green">{meeting.status}</div>
-                          ) : meeting.status == "Cancelled" ? (
-                            <div className="text-red">{meeting.status}</div>
-                          ) : (
-                            <>{meeting.status}</>
-                          )}
-                          {meeting.status !== "Selected" && meeting.status !== "Completed"&& meeting.status !== "Cancelled" && (
-                            <option value="Cancelled">Cancelled</option>
-                          )}
-              </select>
-            )}
-          </TableCell>
-        </TableRow>
-      )
-  )}
-</TableBody>
-
+            <TableBody>
+              {ofsc?.map(
+                (meeting) =>
+                  meeting.status !== null && (
+                    <TableRow key={meeting.id}>
+                      <TableCell>{meeting?.date}</TableCell>
+                      <TableCell>{meeting?.offlineSlotTime}</TableCell>
+                      <TableCell>{meeting?.offlineSlotDuration}</TableCell>
+                      <TableCell className="font-medium">
+                        {meeting?.user?.name}
+                      </TableCell>
+                      <TableCell>{meeting?.user?.email}</TableCell>
+                      <TableCell>{meeting?.user?.mobile}</TableCell>
+                      <TableCell>{meeting?.priority}</TableCell>
+                      <TableCell>
+                        {meeting.status === "Completed" ||
+                        meeting.status === "Cancelled" ? (
+                          <div
+                            className={
+                              meeting.status === "Completed"
+                                ? "text-green-900"
+                                : "text-red-900"
+                            }
+                          >
+                            {meeting.status}
+                          </div>
+                        ) : (
+                          <select
+                            className={"w-[100px] p-2 font-normal border"}
+                            value={meeting.status}
+                            onChange={(e) =>
+                              updateScheduleStatus(meeting.id, e.target.value)
+                            }
+                          >
+                            {meeting.status === "Selected" ? (
+                              <>
+                                <option value="Selected">Selected</option>
+                                <option value="Scheduled">Schedule</option>
+                                <option value="Completed">Completed</option>
+                              </>
+                            ) : meeting.status === "Scheduled" ? (
+                              <>
+                                <option value="Scheduled"> Scheduled </option>
+                                <option value="Completed">Completed</option>
+                              </>
+                            ) : meeting.status == "Completed" ? (
+                              <div className="text-green">{meeting.status}</div>
+                            ) : meeting.status == "Cancelled" ? (
+                              <div className="text-red">{meeting.status}</div>
+                            ) : (
+                              <>{meeting.status}</>
+                            )}
+                            {meeting.status !== "Selected" &&
+                              meeting.status !== "Completed" &&
+                              meeting.status !== "Cancelled" && (
+                                <>
+                                  <option value="Cancelled">Cancelled</option>
+                                  <option value="Completed">Cancddelled</option>
+                                </>
+                              )}
+                          </select>
+                        )}
+                      </TableCell>
+                      {meeting.status == "Completed" && (
+                        <TableCell>
+                          <div
+                            className="hover:scale-110 cursor-pointer"
+                            onClick={(e) =>
+                              updateScheduleStatus(meeting.id, "Clear")
+                            }
+                          >
+                            <Trash2 />
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  )
+              )}
+            </TableBody>
           </Table>
         </div>
       </Sheet>
