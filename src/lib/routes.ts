@@ -680,23 +680,20 @@ export async function userFeedback(feedback: TypeUserFeedback) {
     });
 
     if (provider) {
+      const maxRating = 10; 
       const averageRating =
-        ((feedback.cleanliness ?? 0) +
-          (feedback.efficiency ?? 0) +
-          (feedback.problemResolution ?? 0) +
-          (feedback.professionalism ?? 0) +
-          (feedback.punctuality ?? 0) +
-          (feedback.resolutionTime ?? 0)) /
+        ((feedback.cleanliness ?? 0) / maxRating +
+          (feedback.efficiency ?? 0) / maxRating +
+          (feedback.problemResolution ?? 0) / maxRating +
+          (feedback.professionalism ?? 0) / maxRating +
+          (feedback.punctuality ?? 0) / maxRating +
+          (feedback.resolutionTime ?? 0) / maxRating) /
         7;
 
       let totalAvgRating = averageRating;
       if (provider?.averageRating) {
-        totalAvgRating = averageRating + provider?.averageRating;
+        totalAvgRating = (averageRating * 7 + provider.averageRating) / 8;
       }
-
-      // Ensure totalAvgRating doesn't exceed 10
-      totalAvgRating = Math.min(totalAvgRating, 9.76);
-
       await tx
         .update(Providers)
         .set({ averageRating: totalAvgRating })
@@ -705,7 +702,6 @@ export async function userFeedback(feedback: TypeUserFeedback) {
   });
   return await db.insert(Ratings).values(feedback).returning();
 }
-
 
 export async function FeedbackExists(providerId: string, userId: string) {
   const ratingExist1 = await db.query.Ratings.findFirst({
@@ -766,9 +762,9 @@ export async function getProviders(
         long: Providers.long,
         serviceName: Providers.serviceName,
         averageRating: Providers.averageRating,
-        offlinePrice : Providers.offlinePrice,
+        offlinePrice: Providers.offlinePrice,
 
-        onlinePrice : Providers.onlinePrice,
+        onlinePrice: Providers.onlinePrice,
         createdAt: Providers.createdAt,
         updatedAt: Providers.updatedAt,
         distance:
