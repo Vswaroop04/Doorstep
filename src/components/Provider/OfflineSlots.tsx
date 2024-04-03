@@ -492,7 +492,6 @@ export default function OfflineSlots({
                               meeting.status !== "Cancelled" && (
                                 <>
                                   <option value="Cancelled">Cancelled</option>
-                                  <option value="Completed">Cancddelled</option>
                                 </>
                               )}
                           </select>

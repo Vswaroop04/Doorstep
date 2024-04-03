@@ -313,7 +313,7 @@ export const updateStatusOfflineSchedule = async (
     .set({ status: status })
     .where(eq(OfflineSchedules.id, id))
     .returning();
-  if (status === "Completed") {
+  if (status === "Clear") {
     await db
       .delete(OfflineSchedules)
       .where(
