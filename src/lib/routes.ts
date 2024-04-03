@@ -710,33 +710,30 @@ export async function getUserById(id: string) {
   };
 }
 export async function userFeedback(feedback: TypeUserFeedback) {
-  await db.transaction(async (tx) => {
-    const provider = await tx.query.Providers.findFirst({
-      where: eq(Providers.id, feedback.providerId),
-    });
-
-    if (provider) {
-      const maxRating = 10;
-      const averageRating =
-        ((feedback.cleanliness ?? 0) / maxRating +
-          (feedback.efficiency ?? 0) / maxRating +
-          (feedback.problemResolution ?? 0) / maxRating +
-          (feedback.professionalism ?? 0) / maxRating +
-          (feedback.punctuality ?? 0) / maxRating +
-          (feedback.resolutionTime ?? 0) / maxRating) /
-        7;
-
-      let totalAvgRating = averageRating;
-      if (provider?.averageRating) {
-        totalAvgRating = (averageRating * 7 + provider.averageRating) / 8;
-      }
-      await tx
-        .update(Providers)
-        .set({ averageRating: totalAvgRating })
-        .where(eq(Providers.id, feedback.providerId));
-    }
+  let feedbacke = await db.insert(Ratings).values(feedback).returning();
+  let ratings = await db.query.Ratings.findMany({
+    where: (feedbacki, { eq }) => eq(feedbacki.providerId, feedback.providerId),
   });
-  return await db.insert(Ratings).values(feedback).returning();
+
+  let sum = 0;
+  let count = 0;
+
+  ratings.forEach((rating) => {
+    const { id, createdAt, providerId, userId, ...rest } = rating;
+    Object.values(rest).forEach((value) => {
+      if (value !== null) {
+        sum += value;
+        count++;
+      }
+    });
+  });
+
+  const totalAvgRating = count === 0 ? 0 : sum / count;
+  await db
+    .update(Providers)
+    .set({ averageRating: totalAvgRating })
+    .where(eq(Providers.id, feedback.providerId));
+  return feedbacke;
 }
 
 export async function FeedbackExists(providerId: string, userId: string) {
