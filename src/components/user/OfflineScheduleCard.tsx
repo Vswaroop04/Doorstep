@@ -11,12 +11,24 @@ import {
 } from "@/components/ui/card";
 import { OfflineSchedule } from "@/lib/types/authType";
 import OfflineSchedulesUser from "./OfflineScheduleWithAvatar";
-
+import useAuth from "@/hooks/useAuth";
 export function OfflineMeetingCard({
   offlineSchedules,
 }: {
   offlineSchedules?: OfflineSchedule[];
 }) {
+  const { auth } = useAuth();
+  console.log(auth);
+
+  function getProviderPrice(providerId: string) {
+    // Use find instead of map to find the first meeting with the given providerId
+    const meeting = auth?.user?.OnlineMeetingReq?.find(
+      (meeting) => meeting.providerId === providerId
+    );
+    // Return the price if meeting is found, otherwise return null
+    return meeting ? meeting.offlinePrice : undefined;
+  }
+
   return (
     <div>
       <Card className="">
@@ -39,7 +51,7 @@ export function OfflineMeetingCard({
                   offlineSlotDuration={ofsc.offlineSlotDuration || 0}
                   date={ofsc.date}
                   status={ofsc.status}
-                  price={ofsc.provider?.offlinePrice}
+                  price={getProviderPrice(ofsc.providerId)}
                 />
               )
           )}
