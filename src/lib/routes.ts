@@ -293,6 +293,25 @@ export const rejectMeetingWithCustomer = async (
     .returning();
 };
 
+
+  export const updateEmailStatus = async (
+    userEmail: string,
+    type: string
+  ) => {
+    if(type = "Provider"){
+      return await db.update(Providers)
+      .set({ verified: "true" })
+      .where(eq(Providers.email, userEmail))
+      .returning();
+    }else{
+
+      return await db.update(Users)
+      .set({ verified: "true" })
+      .where(eq(Users.email, userEmail))
+      .returning();
+    }
+  };
+
 export const scheduleOfflineMeetingWithProvider = async (
   OfflineSchedule: TypeOfflineSchedules
 ) => {

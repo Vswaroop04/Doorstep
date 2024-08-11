@@ -44,6 +44,7 @@ export const Users = pgTable(
     expiryDate: text("expiryDate"),
     cvc: text("cvc"),
     nameOnCard: text("nameOnCard"),
+    verified : text("verified"),
   },
   (users) => {
     return {
@@ -72,6 +73,7 @@ export const Providers = pgTable(
     serviceName: text("serviceName").notNull(),
     mobile: bigint("mobile", { mode: "number" }),
     averageRating: customFloat("averageRating"),
+    verified : text("verified"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

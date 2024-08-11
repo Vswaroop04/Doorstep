@@ -35,6 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -60,7 +61,21 @@ export default function SignUpComponent() {
     resolver: zodResolver(providerFormSchema),
   });
 
-  function UserSignUp(values: z.infer<typeof userFormSchema>) {
+  function UserSignUp (values: z.infer<typeof userFormSchema>) {
+    if ("geolocation" in window.navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+          setLocation({ lat, long });
+        } catch (e) {
+          console.error("Error retrieving geolocation:", e);
+        }
+      });
+    } else {
+      console.error("Geolocation not supported");
+      setIsGPSLoading(false);
+    }
     toast.info("Creating Account ...", { id: "loading", duration: 500 });
 
     mutation.mutate({
@@ -73,7 +88,21 @@ export default function SignUpComponent() {
   }
   function ProviderSignUp(values: z.infer<typeof providerFormSchema>) {
     toast.info("Creating Account ..", { id: "loading", duration: 500 });
-
+    if ("geolocation" in window.navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const lat = position.coords.latitude;
+          const long = position.coords.longitude;
+          setLocation({ lat, long });
+        } catch (e) {
+          console.error("Error retrieving geolocation:", e);
+        }
+        toast.info("Your location has been updated!");
+        setAutoLoc(true);
+      });
+    } else {
+      console.error("Geolocation not supported");
+    }
     providerMutation.mutate({
       lat: location.lat || 0,
       long: location.long || 0,
@@ -108,6 +137,19 @@ export default function SignUpComponent() {
       router.push("/sign-in?as=provider");
     },
   });
+  const [cardDetails, setcardDetails] = useState<{
+    cardDetails?: string;
+    expiryDate?: string;
+    cvc?: string;
+    nameOnCard?: string;
+  }>({});
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setcardDetails((prevDetails) => ({
+      ...prevDetails,
+      [id]: value,
+    }));
+  };
 
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<string>("user");
@@ -121,12 +163,7 @@ export default function SignUpComponent() {
     lat: 45.501,
     long: 73.567,
   });
-  const [cardDetails, setcardDetails] = useState<{
-    cardDetails?: string;
-    expiryDate?: string;
-    cvc?: string;
-    nameOnCard?: string;
-  }>({});
+
 
   const search = searchParams.get("as");
   useEffect(() => {
@@ -223,7 +260,7 @@ export default function SignUpComponent() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="name">Name</FormLabel>
+                        <FormLabel htmlFor="name">Name <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="name"
@@ -242,7 +279,7 @@ export default function SignUpComponent() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <FormLabel htmlFor="email">Email <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="email"
@@ -261,7 +298,7 @@ export default function SignUpComponent() {
                     name="mobile"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="mobile">Mobile</FormLabel>
+                        <FormLabel htmlFor="mobile">Mobile  <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="mobile"
@@ -280,7 +317,7 @@ export default function SignUpComponent() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <FormLabel htmlFor="password">Password <span className="text-red-500">*</span> </FormLabel>
                         <FormControl>
                           <Input
                             id="password"
@@ -294,83 +331,73 @@ export default function SignUpComponent() {
                       </FormItem>
                     )}
                   />
-                  <div>
-                    <Label className="pb-2 font-medium">Card Details :</Label>
-
-                    <div className="mt-2 outline">
-                      <Button
-                        className="flex gap-2 border-brand-verified text-brand-verified hover:text-brand-verified items-center mx-auto justify-center"
-                        variant={"secondary"}
-                        onClick={() => setCardDetailsPopup(true)}
-                        type="button"
-                      >
-                        <PlusCircleIcon />
-                        <span>Add Card Details</span>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="space-y-1 pt-4">
-                    <>
-                      {isGPSLoading ? (
-                        <Loader className="col-span-1 m-auto flex animate-spin items-center justify-center" />
-                      ) : (
-                        <>
-                          <Label className="pb-2 font-medium">Location :</Label>
-
-                          <div className="outline-dotted">
-                            <Button
-                              className="flex gap-2 border-brand-verified text-brand-verified hover:text-brand-verified"
-                              variant={"secondary"}
-                              onClick={handleLocationClick}
-                              type="button"
-                            >
-                              <LocateFixed size={32} />
-                              <span>Detect your location automatically</span>
-                            </Button>
-                          </div>
-
-                          <>
-                            <div className="flex items-center">
-                              <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
-                              <span className="px-2">or</span>{" "}
-                              <hr className="flex-grow border-gray-400 h-0 mt-2" />{" "}
-                            </div>
-                            <div className="pb-2">
-                              <Label className="py-2 font-medium">
-                                Manual :
-                              </Label>
-                              <div className="flex">
-                                <Input
-                                  type="number"
-                                  placeholder="Lat"
-                                  className="border-gray-400 border rounded-md px-2 py-1"
-                                  value={location.lat}
-                                  onChange={(e) =>
-                                    setLocation({
-                                      lat: parseFloat(e.target.value),
-                                      long: location?.long,
-                                    })
-                                  }
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Long"
-                                  className="border-gray-400 border rounded-md px-2 py-1"
-                                  value={location.long}
-                                  onChange={(e) =>
-                                    setLocation({
-                                      lat: location?.lat,
-                                      long: parseFloat(e.target.value),
-                                    })
-                                  }
-                                />
-                              </div>
-                            </div>
-                          </>
-                        </>
-                      )}
-                    </>
-                  </div>
+            
+    <FormItem>
+      <FormControl>
+    
+      <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Card Number 
+            </label>
+            <input
+              id="cardDetails"
+              className="text-sm text-gray-800 bg-white border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 focus:ring-0 w-full"
+              type="text"
+              placeholder="1234 1234 1234 1234"
+              value={cardDetails.cardDetails || ""}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Expiry Date 
+              </label>
+              <input
+                id="expiryDate"
+                className="text-sm text-gray-800 bg-white border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 focus:ring-0 w-full"
+                type="text"
+                placeholder="MM/YY"
+                value={cardDetails.expiryDate || ""}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                CVC 
+              </label>
+              <input
+                id="cvc"
+                className="text-sm text-gray-800 bg-white border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 focus:ring-0 w-full"
+                type="text"
+                placeholder="CVC"
+                value={cardDetails.cvc || ""}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Name on Card 
+            </label>
+            <input
+              id="nameOnCard"
+              className="text-sm text-gray-800 bg-white border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 focus:ring-0 w-full"
+              type="text"
+              placeholder="John Doe"
+              value={cardDetails.nameOnCard || ""}
+              onChange={handleInputChange}
+            />
+          </div>
+        </div>
+      </FormControl>
+      <p className="text-gray-500 mt-4 text-xs flex items-center ">
+        * These details will be used for further payments.
+      </p>
+      <FormMessage />
+    </FormItem>
+   
                 </CardContent>
                 <CardFooter>
                   <Button variant={"outline"} className="mx-auto" type="submit">
@@ -389,14 +416,14 @@ export default function SignUpComponent() {
               <CardDescription>
                 <div className="mt-4">
                   <div className="text-gray-700">
-                    Please Sign Up as a provider to explore our services
+                    Please Sign Up as a provider 
                   </div>
                   <div className="mt-2">
                     <span className="text-gray-700">
                       Already have an Account ? {""}
                     </span>
                     <Link href="/sign-in" className="underline text-blue-500">
-                      {mutation?.isPending ? "Creating Account..." : "Sign Up"}
+                      {mutation?.isPending ? "Creating Account..." : "Sign In"}
                     </Link>
                   </div>
                 </div>
@@ -413,7 +440,7 @@ export default function SignUpComponent() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="name">Name</FormLabel>
+                        <FormLabel htmlFor="name">Name <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="name"
@@ -432,7 +459,7 @@ export default function SignUpComponent() {
                     name="mobile"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="mobile">Mobile</FormLabel>
+                        <FormLabel htmlFor="mobile">Mobile <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="mobile"
@@ -450,7 +477,7 @@ export default function SignUpComponent() {
                     name="serviceName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="mobile">Service</FormLabel>
+                        <FormLabel htmlFor="mobile">Service <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -481,12 +508,15 @@ export default function SignUpComponent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="mobile">
-                          Online Price (in $/Hr)
+                        Online Session Fee (in $/Hr) <span className="text-red-500">*</span>
+                          <p className="text-gray-500  text-xs flex items-center ">
+        This Price will be used for online meetings and will be visible to clients
+      </p>
                         </FormLabel>
                         <FormControl>
                           <Input
                             id="number"
-                            placeholder="Online Price"
+                            placeholder="10 $"
                             className="text-slate-900"
                             {...field}
                           />
@@ -501,12 +531,15 @@ export default function SignUpComponent() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="mobile">
-                          Offline Price (in $/Hr)
+                          Offline Session Fee (in $/Hr) <span className="text-red-500">*</span>
+                          <p className="text-gray-500  text-xs flex items-center ">
+        This Price will be used for offline meetings and will be visible to clients once you scheduke offline meetings
+      </p>
                         </FormLabel>
                         <FormControl>
                           <Input
                             id="number"
-                            placeholder="Offline Price"
+                            placeholder="15 $"
                             className="text-slate-900"
                             {...field}
                           />
@@ -521,7 +554,7 @@ export default function SignUpComponent() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="email">Email</FormLabel>
+                        <FormLabel htmlFor="email">Email <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="email"
@@ -540,11 +573,13 @@ export default function SignUpComponent() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="password">Slots</FormLabel>
+                        <FormLabel htmlFor="password">Slots <span className="text-red-500">*</span>             <p className="text-gray-500  text-xs flex items-center ">
+        Please Schedule Your Online Meeting Slots According To Your Availability
+      </p> </FormLabel>
                         <FormControl>
                           <Button
                             type="button"
-                            className="flex hover:flex-1"
+                            className="flex hover:flex-1 border items-center "
                             variant={"ghost"}
                             onClick={() => setOpen(true)}
                           >
@@ -561,7 +596,7 @@ export default function SignUpComponent() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="password">Password</FormLabel>
+                        <FormLabel htmlFor="password">Password <span className="text-red-500">*</span></FormLabel>
                         <FormControl>
                           <Input
                             id="password"
@@ -575,32 +610,6 @@ export default function SignUpComponent() {
                       </FormItem>
                     )}
                   />
-
-                  <div className="space-y-1 pt-4">
-                    <>
-                      {isGPSLoading ? (
-                        <Loader className="col-span-1 m-auto flex animate-spin items-center justify-center" />
-                      ) : (
-                        <div>
-                          <Label className="pb-2 font-medium">
-                            Location :{" "}
-                          </Label>
-
-                          <div className="outline-dotted">
-                            <Button
-                              className="flex gap-2 border-brand-verified text-brand-verified hover:text-brand-verified"
-                              variant={"secondary"}
-                              onClick={handleLocationClick}
-                              type="button"
-                            >
-                              <LocateFixed size={32} />
-                              <span>Detect your location automatically</span>
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  </div>
                 </CardContent>
                 <CardFooter>
                   <Button variant="outline" className="mx-auto" type="submit">
