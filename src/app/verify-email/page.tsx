@@ -2,11 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from "next/navigation";
 
-interface EmailVerificationProps {
-  token?: string;
-}
 
-const EmailVerification: React.FC<EmailVerificationProps> = () => {
+const EmailVerification = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams()
