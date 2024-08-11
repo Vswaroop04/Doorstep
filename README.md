@@ -4,7 +4,16 @@
 
 ## Problem Statement
 
-One of the key challenges faced in our project is the absence of a centralized place to connect service providers (e.g., plumbers, electricians, carpenters, tutors) with users who require their services. The goal is to create an efficient and user-friendly interface where users can easily find and engage with service providers based on their needs.
+In many areas, there is a lack of centralized platforms where users can easily find and connect with various service providers. Doorstep addresses this issue by offering a comprehensive solution that not only connects users with service providers but also includes features for managing appointments and optimizing service routes.
+
+
+## Features
+
+- **Digital Scheduling**: Users can book appointments with service providers using a user-friendly online interface. Providers can manage these online bookings and arrange in-person appointments through their dedicated dashboard.
+
+- **In-Person Appointments**: Schedule face-to-face meetings with service providers. Users can review and compare prices for in-person services to ensure they make well-informed choices.
+
+- **Appointment Management**: Users can create both digital and in-person appointments with service providers. For in-person appointments, users have the ability to view and compare pricing options before finalizing their bookings.
 
 ## Tech Stack
 
@@ -37,10 +46,20 @@ To get started with Doorstep, follow these steps:
     ```bash
     npm run migrate
     ```
+5. **Start the Development Server**
 
-## Running the Application
+    ```bash
+    npm run dev
+    ```
 
-To start the development server, use the following command:
+## Contributing
 
-```bash
-npm run dev
+We welcome contributions to enhance the Doorstep platform. To get started, please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+<p align="center">
+  Made with ❤ by Vishnu
+</p>
