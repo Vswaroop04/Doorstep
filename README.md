@@ -15,6 +15,13 @@ In many areas, there is a lack of centralized platforms where users can easily f
 
 - **Appointment Management**: Users can create both digital and in-person appointments with service providers. For in-person appointments, users have the ability to view and compare pricing options before finalizing their bookings.
 
+![image](https://github.com/user-attachments/assets/2aed85a4-3dc3-4a6a-96c9-7abd2f4c7097)
+![image](https://github.com/user-attachments/assets/306d10d2-f7fc-4818-9ac1-e347f3eb7ff8)
+![image](https://github.com/user-attachments/assets/9e448613-daa5-48a7-bf86-57ca8791b21b)
+![image](https://github.com/user-attachments/assets/a54f0246-ab1b-4a51-bdb5-2a2a3f0cd55f)
+![image](https://github.com/user-attachments/assets/3436f283-7b7e-4caa-928a-7563f686ca5b)
+
+
 ## Tech Stack
 
 - **Next.js**: A React framework for server-side rendering and static site generation.
